@@ -1,17 +1,7 @@
-# dbaccess class for accessing MySQL database
-# This script loads stock item codes from FinanceDataReader, and 
-# then loads daily price data for each stock item.
-
-import numpy as np
-import os
-import datetime
-import pandas as pd
-import FinanceDataReader as fdr 
+# dbaccess class for accessing MySQL database.
 import mysql.connector
 from mysql.connector import Error
 import logging
-from sqlalchemy import create_engine
-import urllib.parse
 
 class dbaccess:
     def __init__(self, host, user, password, database):
@@ -20,7 +10,6 @@ class dbaccess:
         self.password = password
         self.database = database
         self.connection = None
-        self._sqlalchemy_engine = None  # SQLAlchemy 엔진 캐싱
 
     def connect_to_mysql(self):
             """Connect to MySQL database (재연결 방지)"""
@@ -57,4 +46,4 @@ class dbaccess:
     def close_connection(self):
         if self.connection and self.connection.is_connected():
             self.connection.close()
-            logging.info("MySQL connection is closed")        
+            logging.info("MySQL connection is closed")

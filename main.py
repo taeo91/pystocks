@@ -1,5 +1,6 @@
 import os
 import time
+import datetime
 import logging
 
 from AppManager import get_db_connection
@@ -15,8 +16,10 @@ if __name__ == "__main__":
         if price_manager.create_prices_table():
             logging.info("주식 가격 정보 업데이트를 시작합니다.")
 
-            # 환경 변수에서 시작 날짜를 가져오거나 기본값 사용
-            start_date = os.getenv('PRICE_FETCH_START_DATE', '2023-01-01')
+            # 환경 변수에서 시작 날짜를 가져오고, 없으면 1년 전 날짜로 설정
+            one_year_ago = datetime.date.today() - datetime.timedelta(days=365)
+            start_date = os.getenv('PRICE_FETCH_START_DATE', one_year_ago.strftime('%Y-%m-%d'))
+
             stock_count = os.getenv('STOCK_COUNT')
             limit = int(stock_count) if stock_count else None
             price_manager.save_daily_prices(start_date=start_date, limit=limit)

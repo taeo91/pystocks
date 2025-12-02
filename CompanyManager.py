@@ -39,18 +39,15 @@ class CompanyManager:
             """
             self.db_access.execute_query(query)
             logging.info("Table 'companies' created or already exists.")
-            print("Table 'companies' created or already exists.")
             return True 
         except Exception as e:
             logging.error(f"Error creating 'companies' table: {e}")
-            print(f"Error creating 'companies' table: {e}")
             return False
 
     def save_companies_from_fdr(self):
         """FinanceDataReader를 사용하여 KRX 전체 종목 정보를 가져와 DB에 저장하는 메서드"""
         try:
             logging.info("Fetching company list from KRX...")
-            print("Fetching company list from KRX...")
             # KRX 전체 종목 리스트 가져오기
             stocks = fdr.StockListing('KRX') # KRX는 코스피, 코스닥, 코넥스, ETF, ETN 등을 모두 포함합니다.
 
@@ -74,11 +71,9 @@ class CompanyManager:
 
             if new_stocks.empty:
                 logging.info("새로 추가할 종목이 없습니다.")
-                print("새로 추가할 종목이 없습니다.")
                 return
 
             logging.info(f"총 {len(new_stocks)}개의 새로운 종목을 데이터베이스에 저장합니다.")
-            print(f"총 {len(new_stocks)}개의 새로운 종목을 데이터베이스에 저장합니다.")
 
             for _, row in new_stocks.iterrows():
                 query = """
@@ -93,11 +88,9 @@ class CompanyManager:
                 self.db_access.execute_query(query, params)
             
             logging.info(f"성공적으로 {len(new_stocks)}개의 신규 종목 정보를 저장했습니다.")
-            print(f"성공적으로 {len(new_stocks)}개의 신규 종목 정보를 저장했습니다.")
 
         except Exception as e:
             logging.error(f"Error saving companies from fdr: {e}")
-            print(f"Error saving companies from fdr: {e}")
 
 if __name__ == "__main__":
     # AppManager를 사용하여 데이터베이스 연결 및 로깅 설정.
