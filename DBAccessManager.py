@@ -40,7 +40,20 @@ class dbaccess:
             except Error as e:
                 logging.error(f"Error while connecting to MySQL: {e}")
                 return None        
-            
+
+    def execute_query(self, query, params=None):
+        """쿼리 실행"""
+        if not self.connection or not self.connection.is_connected():
+            logging.error("데이터베이스에 연결되어 있지 않습니다.")
+            return None
+        
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query, params)
+            self.connection.commit()
+        finally:
+            cursor.close()
+
     def close_connection(self):
         if self.connection and self.connection.is_connected():
             self.connection.close()

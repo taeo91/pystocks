@@ -1,0 +1,1113 @@
+2025-12-02 20:59:21,720 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 20:59:21,721 - INFO - 데이터베이스 연결 성공.
+2025-12-02 20:59:21,721 - INFO - CompanyManager 스크립트 시작: Tue Dec  2 20:59:21 2025
+2025-12-02 20:59:21,731 - INFO - Table 'companies' created or already exists.
+2025-12-02 20:59:21,731 - INFO - 종목 정보 업데이트를 시작합니다.
+2025-12-02 20:59:21,731 - INFO - Fetching company list from KRX...
+2025-12-02 20:59:22,235 - ERROR - Error saving companies from fdr: 'ListingDate'
+2025-12-02 20:59:22,235 - INFO - CompanyManager 스크립트 종료: Tue Dec  2 20:59:22 2025
+2025-12-02 20:59:22,238 - INFO - MySQL connection is closed
+2025-12-02 20:59:22,239 - INFO - 데이터베이스 연결이 종료되었습니다.
+2025-12-02 21:03:59,672 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 21:03:59,673 - INFO - 데이터베이스 연결 성공.
+2025-12-02 21:03:59,673 - INFO - CompanyManager 스크립트 시작: Tue Dec  2 21:03:59 2025
+2025-12-02 21:03:59,687 - INFO - Table 'companies' created or already exists.
+2025-12-02 21:03:59,687 - INFO - 종목 정보 업데이트를 시작합니다.
+2025-12-02 21:03:59,687 - INFO - Fetching company list from KRX...
+2025-12-02 21:04:00,615 - INFO - Total 2887 companies found. Saving to database...
+2025-12-02 21:04:00,621 - ERROR - Error saving companies from fdr: 1054 (42S22): Unknown column 'code' in 'field list'
+2025-12-02 21:04:00,622 - INFO - CompanyManager 스크립트 종료: Tue Dec  2 21:04:00 2025
+2025-12-02 21:04:00,624 - INFO - MySQL connection is closed
+2025-12-02 21:04:00,625 - INFO - 데이터베이스 연결이 종료되었습니다.
+2025-12-02 21:10:40,353 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 21:10:40,353 - INFO - 데이터베이스 연결 성공.
+2025-12-02 21:10:40,353 - INFO - CompanyManager 스크립트 시작: Tue Dec  2 21:10:40 2025
+2025-12-02 21:10:40,415 - INFO - Table 'companies' created or already exists.
+2025-12-02 21:10:40,415 - INFO - 종목 정보 업데이트를 시작합니다.
+2025-12-02 21:10:40,415 - INFO - Fetching company list from KRX...
+2025-12-02 21:10:41,024 - INFO - Total 2887 companies found. Saving to database...
+2025-12-02 21:11:20,407 - INFO - Successfully saved company information.
+2025-12-02 21:11:20,409 - INFO - CompanyManager 스크립트 종료: Tue Dec  2 21:11:20 2025
+2025-12-02 21:11:20,413 - INFO - MySQL connection is closed
+2025-12-02 21:11:20,414 - INFO - 데이터베이스 연결이 종료되었습니다.
+2025-12-02 21:11:30,953 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 21:11:30,953 - INFO - 데이터베이스 연결 성공.
+2025-12-02 21:11:30,953 - INFO - CompanyManager 스크립트 시작: Tue Dec  2 21:11:30 2025
+2025-12-02 21:11:30,967 - INFO - Table 'companies' created or already exists.
+2025-12-02 21:11:30,967 - INFO - 종목 정보 업데이트를 시작합니다.
+2025-12-02 21:11:30,967 - INFO - Fetching company list from KRX...
+2025-12-02 21:11:31,554 - INFO - Total 2887 companies found. Saving to database...
+2025-12-02 21:12:02,701 - INFO - Successfully saved company information.
+2025-12-02 21:12:02,704 - INFO - CompanyManager 스크립트 종료: Tue Dec  2 21:12:02 2025
+2025-12-02 21:12:02,708 - INFO - MySQL connection is closed
+2025-12-02 21:12:02,709 - INFO - 데이터베이스 연결이 종료되었습니다.
+2025-12-02 21:16:21,226 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 21:16:21,226 - INFO - 데이터베이스 연결 성공.
+2025-12-02 21:16:21,226 - INFO - CompanyManager 스크립트 시작: Tue Dec  2 21:16:21 2025
+2025-12-02 21:16:21,240 - INFO - Table 'companies' created or already exists.
+2025-12-02 21:16:21,240 - INFO - 종목 정보 업데이트를 시작합니다.
+2025-12-02 21:16:21,240 - INFO - Fetching company list from KRX...
+2025-12-02 21:16:21,796 - INFO - DB에 존재하는 종목 수: 2887
+2025-12-02 21:16:21,803 - INFO - 새로 추가할 종목이 없습니다.
+2025-12-02 21:16:21,803 - INFO - CompanyManager 스크립트 종료: Tue Dec  2 21:16:21 2025
+2025-12-02 21:16:21,806 - INFO - MySQL connection is closed
+2025-12-02 21:16:21,807 - INFO - 데이터베이스 연결이 종료되었습니다.
+2025-12-02 21:23:37,052 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 21:23:37,052 - INFO - 데이터베이스 연결 성공.
+2025-12-02 21:23:37,052 - INFO - StockPriceManager 스크립트 시작: Tue Dec  2 21:23:37 2025
+2025-12-02 21:23:37,121 - INFO - Table 'prices' created or already exists.
+2025-12-02 21:23:37,121 - INFO - 주식 가격 정보 업데이트를 시작합니다.
+2025-12-02 21:23:37,129 - INFO - Fetching price data for 500 companies. Default start date: 20250101.
+2025-12-02 21:23:37,296 - INFO - Successfully saved/updated 223 price records for 000020.
+2025-12-02 21:23:37,443 - INFO - Successfully saved/updated 223 price records for 000040.
+2025-12-02 21:23:37,600 - INFO - Successfully saved/updated 223 price records for 000050.
+2025-12-02 21:23:37,765 - INFO - Successfully saved/updated 223 price records for 000070.
+2025-12-02 21:23:37,917 - INFO - Successfully saved/updated 223 price records for 000080.
+2025-12-02 21:23:38,083 - INFO - Successfully saved/updated 223 price records for 000087.
+2025-12-02 21:23:38,235 - INFO - Successfully saved/updated 223 price records for 000100.
+2025-12-02 21:23:38,385 - INFO - Successfully saved/updated 223 price records for 000105.
+2025-12-02 21:23:38,537 - INFO - Successfully saved/updated 223 price records for 000120.
+2025-12-02 21:23:38,702 - INFO - Successfully saved/updated 223 price records for 000140.
+2025-12-02 21:23:38,858 - INFO - Successfully saved/updated 223 price records for 000145.
+2025-12-02 21:23:39,007 - INFO - Successfully saved/updated 223 price records for 000150.
+2025-12-02 21:23:39,167 - INFO - Successfully saved/updated 223 price records for 000155.
+2025-12-02 21:23:39,327 - INFO - Successfully saved/updated 223 price records for 000157.
+2025-12-02 21:23:39,481 - INFO - Successfully saved/updated 223 price records for 000180.
+2025-12-02 21:23:39,644 - INFO - Successfully saved/updated 223 price records for 000210.
+2025-12-02 21:23:39,796 - INFO - Successfully saved/updated 223 price records for 000215.
+2025-12-02 21:23:39,954 - INFO - Successfully saved/updated 223 price records for 000220.
+2025-12-02 21:23:40,103 - INFO - Successfully saved/updated 223 price records for 000225.
+2025-12-02 21:23:40,253 - INFO - Successfully saved/updated 223 price records for 000227.
+2025-12-02 21:23:40,400 - INFO - Successfully saved/updated 223 price records for 000230.
+2025-12-02 21:23:40,546 - INFO - Successfully saved/updated 223 price records for 000240.
+2025-12-02 21:23:40,694 - INFO - Successfully saved/updated 223 price records for 000250.
+2025-12-02 21:23:40,841 - INFO - Successfully saved/updated 223 price records for 000270.
+2025-12-02 21:23:40,999 - INFO - Successfully saved/updated 223 price records for 000300.
+2025-12-02 21:23:41,160 - INFO - Successfully saved/updated 223 price records for 000320.
+2025-12-02 21:23:41,306 - INFO - Successfully saved/updated 223 price records for 000325.
+2025-12-02 21:23:41,451 - INFO - Successfully saved/updated 223 price records for 000370.
+2025-12-02 21:23:41,606 - INFO - Successfully saved/updated 223 price records for 000390.
+2025-12-02 21:23:41,761 - INFO - Successfully saved/updated 223 price records for 000400.
+2025-12-02 21:23:41,974 - INFO - Successfully saved/updated 223 price records for 000430.
+2025-12-02 21:23:42,121 - INFO - Successfully saved/updated 223 price records for 000440.
+2025-12-02 21:23:42,266 - INFO - Successfully saved/updated 223 price records for 000480.
+2025-12-02 21:23:42,413 - INFO - Successfully saved/updated 223 price records for 000490.
+2025-12-02 21:23:42,690 - ERROR - Failed to process data for 0004Y0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0004Y0?period1=1735657200&period2=1764678222&interval=1d&includeAdjustedClose=true
+2025-12-02 21:23:42,833 - INFO - Successfully saved/updated 223 price records for 000500.
+2025-12-02 21:23:42,974 - INFO - Successfully saved/updated 223 price records for 000520.
+2025-12-02 21:23:43,123 - INFO - Successfully saved/updated 223 price records for 000540.
+2025-12-02 21:23:43,266 - INFO - Successfully saved/updated 223 price records for 000545.
+2025-12-02 21:23:43,424 - INFO - Successfully saved/updated 223 price records for 000590.
+2025-12-02 21:23:43,582 - INFO - Successfully saved/updated 223 price records for 000640.
+2025-12-02 21:23:43,736 - INFO - Successfully saved/updated 223 price records for 000650.
+2025-12-02 21:23:43,880 - INFO - Successfully saved/updated 223 price records for 000660.
+2025-12-02 21:23:44,025 - INFO - Successfully saved/updated 223 price records for 000670.
+2025-12-02 21:23:44,174 - INFO - Successfully saved/updated 223 price records for 000680.
+2025-12-02 21:23:44,324 - INFO - Successfully saved/updated 223 price records for 000700.
+2025-12-02 21:23:44,477 - INFO - Successfully saved/updated 223 price records for 000720.
+2025-12-02 21:23:44,615 - INFO - Successfully saved/updated 223 price records for 000725.
+2025-12-02 21:23:44,769 - INFO - Successfully saved/updated 223 price records for 000760.
+2025-12-02 21:23:44,928 - INFO - Successfully saved/updated 223 price records for 000810.
+2025-12-02 21:23:45,081 - INFO - Successfully saved/updated 223 price records for 000815.
+2025-12-02 21:23:45,238 - INFO - Successfully saved/updated 223 price records for 000850.
+2025-12-02 21:23:45,437 - INFO - Successfully saved/updated 223 price records for 000860.
+2025-12-02 21:23:45,587 - INFO - Successfully saved/updated 223 price records for 000880.
+2025-12-02 21:23:45,731 - INFO - Successfully saved/updated 223 price records for 00088K.
+2025-12-02 21:23:45,873 - INFO - Successfully saved/updated 223 price records for 000890.
+2025-12-02 21:23:46,112 - ERROR - Failed to process data for 0008Z0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0008Z0?period1=1735657200&period2=1764678225&interval=1d&includeAdjustedClose=true
+2025-12-02 21:23:46,269 - INFO - Successfully saved/updated 223 price records for 000910.
+2025-12-02 21:23:46,415 - INFO - Successfully saved/updated 223 price records for 000950.
+2025-12-02 21:23:46,556 - INFO - Successfully saved/updated 223 price records for 000970.
+2025-12-02 21:23:46,699 - INFO - Successfully saved/updated 223 price records for 000990.
+2025-12-02 21:23:46,859 - INFO - Successfully saved/updated 223 price records for 001000.
+2025-12-02 21:23:46,998 - INFO - Successfully saved/updated 223 price records for 001020.
+2025-12-02 21:23:47,147 - INFO - Successfully saved/updated 223 price records for 001040.
+2025-12-02 21:23:47,327 - INFO - Successfully saved/updated 223 price records for 001045.
+2025-12-02 21:23:47,456 - INFO - Successfully saved/updated 223 price records for 00104K.
+2025-12-02 21:23:47,616 - INFO - Successfully saved/updated 223 price records for 001060.
+2025-12-02 21:23:47,768 - INFO - Successfully saved/updated 223 price records for 001065.
+2025-12-02 21:23:47,910 - INFO - Successfully saved/updated 223 price records for 001067.
+2025-12-02 21:23:48,063 - INFO - Successfully saved/updated 223 price records for 001070.
+2025-12-02 21:23:48,200 - INFO - Successfully saved/updated 223 price records for 001080.
+2025-12-02 21:23:48,440 - ERROR - Failed to process data for 0010V0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0010V0?period1=1735657200&period2=1764678228&interval=1d&includeAdjustedClose=true
+2025-12-02 21:23:48,596 - INFO - Successfully saved/updated 223 price records for 001120.
+2025-12-02 21:23:48,748 - INFO - Successfully saved/updated 223 price records for 001130.
+2025-12-02 21:23:48,900 - INFO - Successfully saved/updated 223 price records for 001140.
+2025-12-02 21:23:49,089 - INFO - Successfully saved/updated 223 price records for 001200.
+2025-12-02 21:23:49,235 - INFO - Successfully saved/updated 223 price records for 001210.
+2025-12-02 21:23:49,388 - INFO - Successfully saved/updated 223 price records for 001230.
+2025-12-02 21:23:49,538 - INFO - Successfully saved/updated 223 price records for 001250.
+2025-12-02 21:23:49,689 - INFO - Successfully saved/updated 223 price records for 001260.
+2025-12-02 21:23:49,827 - INFO - Successfully saved/updated 223 price records for 001270.
+2025-12-02 21:23:49,971 - INFO - Successfully saved/updated 223 price records for 001275.
+2025-12-02 21:23:50,117 - INFO - Successfully saved/updated 223 price records for 001290.
+2025-12-02 21:23:50,272 - INFO - Successfully saved/updated 223 price records for 001340.
+2025-12-02 21:23:50,424 - INFO - Successfully saved/updated 223 price records for 001360.
+2025-12-02 21:23:50,577 - INFO - Successfully saved/updated 223 price records for 001380.
+2025-12-02 21:23:50,718 - INFO - Successfully saved/updated 223 price records for 001390.
+2025-12-02 21:23:50,861 - INFO - Successfully saved/updated 223 price records for 001420.
+2025-12-02 21:23:51,018 - INFO - Successfully saved/updated 223 price records for 001430.
+2025-12-02 21:23:51,169 - INFO - Successfully saved/updated 223 price records for 001440.
+2025-12-02 21:23:51,320 - INFO - Successfully saved/updated 223 price records for 001450.
+2025-12-02 21:23:51,476 - INFO - Successfully saved/updated 223 price records for 001460.
+2025-12-02 21:23:51,627 - INFO - Successfully saved/updated 223 price records for 001465.
+2025-12-02 21:23:51,763 - INFO - Successfully saved/updated 223 price records for 001470.
+2025-12-02 21:23:51,912 - INFO - Successfully saved/updated 223 price records for 001500.
+2025-12-02 21:23:52,067 - INFO - Successfully saved/updated 223 price records for 001510.
+2025-12-02 21:23:52,217 - INFO - Successfully saved/updated 223 price records for 001515.
+2025-12-02 21:23:52,357 - INFO - Successfully saved/updated 223 price records for 001520.
+2025-12-02 21:23:52,500 - INFO - Successfully saved/updated 223 price records for 001525.
+2025-12-02 21:23:52,651 - INFO - Successfully saved/updated 223 price records for 001527.
+2025-12-02 21:23:52,804 - INFO - Successfully saved/updated 223 price records for 001530.
+2025-12-02 21:23:52,955 - INFO - Successfully saved/updated 223 price records for 001540.
+2025-12-02 21:23:53,096 - INFO - Successfully saved/updated 223 price records for 001550.
+2025-12-02 21:23:53,244 - INFO - Successfully saved/updated 223 price records for 001560.
+2025-12-02 21:23:53,387 - INFO - Successfully saved/updated 223 price records for 001570.
+2025-12-02 21:23:53,630 - ERROR - Failed to process data for 0015G0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0015G0?period1=1735657200&period2=1764678233&interval=1d&includeAdjustedClose=true
+2025-12-02 21:23:53,943 - ERROR - Failed to process data for 0015N0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0015N0?period1=1735657200&period2=1764678233&interval=1d&includeAdjustedClose=true
+2025-12-02 21:23:54,088 - INFO - Successfully saved/updated 223 price records for 001620.
+2025-12-02 21:23:54,229 - INFO - Successfully saved/updated 223 price records for 001630.
+2025-12-02 21:23:54,386 - INFO - Successfully saved/updated 223 price records for 001680.
+2025-12-02 21:23:54,539 - INFO - Successfully saved/updated 223 price records for 001685.
+2025-12-02 21:23:54,680 - INFO - Successfully saved/updated 223 price records for 001720.
+2025-12-02 21:23:54,833 - INFO - Successfully saved/updated 223 price records for 001740.
+2025-12-02 21:23:54,974 - INFO - Successfully saved/updated 223 price records for 001750.
+2025-12-02 21:23:55,116 - INFO - Successfully saved/updated 223 price records for 001755.
+2025-12-02 21:23:55,254 - INFO - Successfully saved/updated 223 price records for 001770.
+2025-12-02 21:23:55,395 - INFO - Successfully saved/updated 223 price records for 001780.
+2025-12-02 21:23:55,545 - INFO - Successfully saved/updated 223 price records for 001790.
+2025-12-02 21:23:55,692 - INFO - Successfully saved/updated 223 price records for 001795.
+2025-12-02 21:23:55,846 - INFO - Successfully saved/updated 223 price records for 001800.
+2025-12-02 21:23:56,000 - INFO - Successfully saved/updated 223 price records for 001810.
+2025-12-02 21:23:56,153 - INFO - Successfully saved/updated 223 price records for 001820.
+2025-12-02 21:23:56,304 - INFO - Successfully saved/updated 223 price records for 001840.
+2025-12-02 21:23:56,455 - INFO - Successfully saved/updated 223 price records for 001940.
+2025-12-02 21:23:56,599 - INFO - Successfully saved/updated 223 price records for 002020.
+2025-12-02 21:23:56,739 - INFO - Successfully saved/updated 223 price records for 002025.
+2025-12-02 21:23:56,896 - INFO - Successfully saved/updated 223 price records for 002030.
+2025-12-02 21:23:57,042 - INFO - Successfully saved/updated 223 price records for 002070.
+2025-12-02 21:23:57,189 - INFO - Successfully saved/updated 223 price records for 002100.
+2025-12-02 21:23:57,331 - INFO - Successfully saved/updated 223 price records for 002140.
+2025-12-02 21:23:57,467 - INFO - Successfully saved/updated 223 price records for 002150.
+2025-12-02 21:23:57,609 - INFO - Successfully saved/updated 223 price records for 002170.
+2025-12-02 21:23:57,731 - INFO - Successfully saved/updated 223 price records for 002200.
+2025-12-02 21:23:57,869 - INFO - Successfully saved/updated 223 price records for 002210.
+2025-12-02 21:23:58,019 - INFO - Successfully saved/updated 223 price records for 002220.
+2025-12-02 21:23:58,163 - INFO - Successfully saved/updated 223 price records for 002230.
+2025-12-02 21:23:58,321 - INFO - Successfully saved/updated 223 price records for 002240.
+2025-12-02 21:23:58,475 - INFO - Successfully saved/updated 223 price records for 002290.
+2025-12-02 21:23:58,624 - INFO - Successfully saved/updated 223 price records for 002310.
+2025-12-02 21:23:58,777 - INFO - Successfully saved/updated 223 price records for 002320.
+2025-12-02 21:23:58,923 - INFO - Successfully saved/updated 223 price records for 002350.
+2025-12-02 21:23:59,065 - INFO - Successfully saved/updated 223 price records for 002355.
+2025-12-02 21:23:59,211 - INFO - Successfully saved/updated 223 price records for 002360.
+2025-12-02 21:23:59,373 - INFO - Successfully saved/updated 223 price records for 002380.
+2025-12-02 21:23:59,524 - INFO - Successfully saved/updated 223 price records for 002390.
+2025-12-02 21:23:59,674 - INFO - Successfully saved/updated 223 price records for 002410.
+2025-12-02 21:23:59,827 - INFO - Successfully saved/updated 223 price records for 002420.
+2025-12-02 21:23:59,974 - INFO - Successfully saved/updated 223 price records for 002450.
+2025-12-02 21:24:00,123 - INFO - Successfully saved/updated 223 price records for 002460.
+2025-12-02 21:24:00,277 - INFO - Successfully saved/updated 223 price records for 002600.
+2025-12-02 21:24:00,425 - INFO - Successfully saved/updated 223 price records for 002620.
+2025-12-02 21:24:00,576 - INFO - Successfully saved/updated 223 price records for 002630.
+2025-12-02 21:24:00,724 - INFO - Successfully saved/updated 223 price records for 002680.
+2025-12-02 21:24:00,870 - INFO - Successfully saved/updated 223 price records for 002690.
+2025-12-02 21:24:01,028 - INFO - Successfully saved/updated 223 price records for 002700.
+2025-12-02 21:24:01,176 - INFO - Successfully saved/updated 223 price records for 002710.
+2025-12-02 21:24:01,321 - INFO - Successfully saved/updated 223 price records for 002720.
+2025-12-02 21:24:01,481 - INFO - Successfully saved/updated 223 price records for 002760.
+2025-12-02 21:24:01,626 - INFO - Successfully saved/updated 223 price records for 002780.
+2025-12-02 21:24:01,766 - INFO - Successfully saved/updated 223 price records for 002785.
+2025-12-02 21:24:01,925 - INFO - Successfully saved/updated 223 price records for 002787.
+2025-12-02 21:24:02,070 - INFO - Successfully saved/updated 223 price records for 002790.
+2025-12-02 21:24:02,213 - INFO - Successfully saved/updated 223 price records for 002795.
+2025-12-02 21:24:02,355 - INFO - Successfully saved/updated 223 price records for 00279K.
+2025-12-02 21:24:02,493 - INFO - Successfully saved/updated 223 price records for 002800.
+2025-12-02 21:24:02,650 - INFO - Successfully saved/updated 223 price records for 002810.
+2025-12-02 21:24:02,800 - INFO - Successfully saved/updated 223 price records for 002820.
+2025-12-02 21:24:02,963 - INFO - Successfully saved/updated 223 price records for 002840.
+2025-12-02 21:24:03,113 - INFO - Successfully saved/updated 223 price records for 002870.
+2025-12-02 21:24:03,262 - INFO - Successfully saved/updated 223 price records for 002880.
+2025-12-02 21:24:03,416 - INFO - Successfully saved/updated 223 price records for 002900.
+2025-12-02 21:24:03,556 - INFO - Successfully saved/updated 223 price records for 002920.
+2025-12-02 21:24:03,713 - INFO - Successfully saved/updated 223 price records for 002960.
+2025-12-02 21:24:03,867 - INFO - Successfully saved/updated 223 price records for 002990.
+2025-12-02 21:24:04,007 - INFO - Successfully saved/updated 223 price records for 002995.
+2025-12-02 21:24:04,158 - INFO - Successfully saved/updated 223 price records for 003000.
+2025-12-02 21:24:04,311 - INFO - Successfully saved/updated 223 price records for 003010.
+2025-12-02 21:24:04,459 - INFO - Successfully saved/updated 223 price records for 003030.
+2025-12-02 21:24:04,611 - INFO - Successfully saved/updated 223 price records for 003060.
+2025-12-02 21:24:04,764 - INFO - Successfully saved/updated 223 price records for 003070.
+2025-12-02 21:24:04,914 - INFO - Successfully saved/updated 223 price records for 003075.
+2025-12-02 21:24:05,070 - INFO - Successfully saved/updated 223 price records for 003080.
+2025-12-02 21:24:05,212 - INFO - Successfully saved/updated 223 price records for 003090.
+2025-12-02 21:24:05,460 - ERROR - Failed to process data for 0030R0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0030R0?period1=1735657200&period2=1764678245&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:05,653 - INFO - Successfully saved/updated 223 price records for 003100.
+2025-12-02 21:24:05,807 - INFO - Successfully saved/updated 223 price records for 003120.
+2025-12-02 21:24:05,951 - INFO - Successfully saved/updated 223 price records for 003160.
+2025-12-02 21:24:06,095 - INFO - Successfully saved/updated 223 price records for 003200.
+2025-12-02 21:24:06,238 - INFO - Successfully saved/updated 223 price records for 003220.
+2025-12-02 21:24:06,379 - INFO - Successfully saved/updated 223 price records for 003230.
+2025-12-02 21:24:06,522 - INFO - Successfully saved/updated 223 price records for 003240.
+2025-12-02 21:24:06,671 - INFO - Successfully saved/updated 223 price records for 003280.
+2025-12-02 21:24:06,833 - INFO - Successfully saved/updated 223 price records for 003300.
+2025-12-02 21:24:06,977 - INFO - Successfully saved/updated 223 price records for 003310.
+2025-12-02 21:24:07,135 - INFO - Successfully saved/updated 223 price records for 003350.
+2025-12-02 21:24:07,275 - INFO - Successfully saved/updated 223 price records for 003380.
+2025-12-02 21:24:07,419 - INFO - Successfully saved/updated 223 price records for 003460.
+2025-12-02 21:24:07,573 - INFO - Successfully saved/updated 223 price records for 003465.
+2025-12-02 21:24:07,720 - INFO - Successfully saved/updated 223 price records for 003470.
+2025-12-02 21:24:07,859 - INFO - Successfully saved/updated 223 price records for 003475.
+2025-12-02 21:24:08,012 - INFO - Successfully saved/updated 223 price records for 003480.
+2025-12-02 21:24:08,156 - INFO - Successfully saved/updated 223 price records for 003490.
+2025-12-02 21:24:08,303 - INFO - Successfully saved/updated 223 price records for 003495.
+2025-12-02 21:24:08,457 - INFO - Successfully saved/updated 223 price records for 003520.
+2025-12-02 21:24:08,604 - INFO - Successfully saved/updated 223 price records for 003530.
+2025-12-02 21:24:08,747 - INFO - Successfully saved/updated 223 price records for 003535.
+2025-12-02 21:24:08,900 - INFO - Successfully saved/updated 223 price records for 003540.
+2025-12-02 21:24:09,042 - INFO - Successfully saved/updated 223 price records for 003545.
+2025-12-02 21:24:09,191 - INFO - Successfully saved/updated 223 price records for 003547.
+2025-12-02 21:24:09,338 - INFO - Successfully saved/updated 223 price records for 003550.
+2025-12-02 21:24:09,483 - INFO - Successfully saved/updated 223 price records for 003555.
+2025-12-02 21:24:09,628 - INFO - Successfully saved/updated 223 price records for 003560.
+2025-12-02 21:24:09,778 - INFO - Successfully saved/updated 223 price records for 003570.
+2025-12-02 21:24:09,936 - INFO - Successfully saved/updated 223 price records for 003580.
+2025-12-02 21:24:10,083 - INFO - Successfully saved/updated 223 price records for 003610.
+2025-12-02 21:24:10,231 - INFO - Successfully saved/updated 223 price records for 003620.
+2025-12-02 21:24:10,378 - INFO - Successfully saved/updated 223 price records for 003650.
+2025-12-02 21:24:10,520 - INFO - Successfully saved/updated 223 price records for 003670.
+2025-12-02 21:24:10,662 - INFO - Successfully saved/updated 223 price records for 003680.
+2025-12-02 21:24:10,819 - INFO - Successfully saved/updated 223 price records for 003690.
+2025-12-02 21:24:10,962 - INFO - Successfully saved/updated 223 price records for 003720.
+2025-12-02 21:24:11,098 - INFO - Successfully saved/updated 223 price records for 003780.
+2025-12-02 21:24:11,345 - ERROR - Failed to process data for 0037T0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0037T0?period1=1735657200&period2=1764678251&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:11,505 - INFO - Successfully saved/updated 223 price records for 003800.
+2025-12-02 21:24:11,652 - INFO - Successfully saved/updated 223 price records for 003830.
+2025-12-02 21:24:11,801 - INFO - Successfully saved/updated 223 price records for 003850.
+2025-12-02 21:24:11,964 - INFO - Successfully saved/updated 223 price records for 003920.
+2025-12-02 21:24:12,119 - INFO - Successfully saved/updated 223 price records for 003925.
+2025-12-02 21:24:12,266 - INFO - Successfully saved/updated 223 price records for 003960.
+2025-12-02 21:24:12,410 - INFO - Successfully saved/updated 223 price records for 004000.
+2025-12-02 21:24:12,557 - INFO - Successfully saved/updated 223 price records for 004020.
+2025-12-02 21:24:12,699 - INFO - Successfully saved/updated 223 price records for 004060.
+2025-12-02 21:24:12,837 - INFO - Successfully saved/updated 223 price records for 004080.
+2025-12-02 21:24:12,988 - INFO - Successfully saved/updated 223 price records for 004090.
+2025-12-02 21:24:13,132 - INFO - Successfully saved/updated 223 price records for 004100.
+2025-12-02 21:24:13,294 - INFO - Successfully saved/updated 223 price records for 004105.
+2025-12-02 21:24:13,450 - INFO - Successfully saved/updated 223 price records for 004140.
+2025-12-02 21:24:13,590 - INFO - Successfully saved/updated 223 price records for 004150.
+2025-12-02 21:24:13,741 - INFO - Successfully saved/updated 223 price records for 004170.
+2025-12-02 21:24:14,055 - ERROR - Failed to process data for 0041B0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0041B0?period1=1735657200&period2=1764678253&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:14,292 - ERROR - Failed to process data for 0041J0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0041J0?period1=1735657200&period2=1764678254&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:14,529 - ERROR - Failed to process data for 0041L0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0041L0?period1=1735657200&period2=1764678254&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:14,690 - INFO - Successfully saved/updated 223 price records for 004250.
+2025-12-02 21:24:14,839 - INFO - Successfully saved/updated 223 price records for 004255.
+2025-12-02 21:24:14,981 - INFO - Successfully saved/updated 223 price records for 004270.
+2025-12-02 21:24:15,125 - INFO - Successfully saved/updated 223 price records for 004310.
+2025-12-02 21:24:15,278 - INFO - Successfully saved/updated 223 price records for 004360.
+2025-12-02 21:24:15,419 - INFO - Successfully saved/updated 223 price records for 004365.
+2025-12-02 21:24:15,574 - INFO - Successfully saved/updated 223 price records for 004370.
+2025-12-02 21:24:15,715 - INFO - Successfully saved/updated 223 price records for 004380.
+2025-12-02 21:24:15,866 - INFO - Successfully saved/updated 223 price records for 004410.
+2025-12-02 21:24:16,005 - INFO - Successfully saved/updated 223 price records for 004415.
+2025-12-02 21:24:16,146 - INFO - Successfully saved/updated 223 price records for 004430.
+2025-12-02 21:24:16,284 - INFO - Successfully saved/updated 223 price records for 004440.
+2025-12-02 21:24:16,423 - INFO - Successfully saved/updated 223 price records for 004450.
+2025-12-02 21:24:16,576 - INFO - Successfully saved/updated 223 price records for 004490.
+2025-12-02 21:24:16,824 - ERROR - Failed to process data for 0044K0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0044K0?period1=1735657200&period2=1764678256&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:16,975 - INFO - Successfully saved/updated 223 price records for 004540.
+2025-12-02 21:24:17,124 - INFO - Successfully saved/updated 223 price records for 004545.
+2025-12-02 21:24:17,269 - INFO - Successfully saved/updated 223 price records for 004560.
+2025-12-02 21:24:17,420 - INFO - Successfully saved/updated 223 price records for 004590.
+2025-12-02 21:24:17,562 - INFO - Successfully saved/updated 223 price records for 004650.
+2025-12-02 21:24:17,709 - INFO - Successfully saved/updated 223 price records for 004690.
+2025-12-02 21:24:17,855 - INFO - Successfully saved/updated 223 price records for 004700.
+2025-12-02 21:24:18,011 - INFO - Successfully saved/updated 223 price records for 004710.
+2025-12-02 21:24:18,165 - INFO - Successfully saved/updated 223 price records for 004720.
+2025-12-02 21:24:18,315 - INFO - Successfully saved/updated 223 price records for 004770.
+2025-12-02 21:24:18,468 - INFO - Successfully saved/updated 223 price records for 004780.
+2025-12-02 21:24:18,621 - INFO - Successfully saved/updated 223 price records for 004800.
+2025-12-02 21:24:18,763 - INFO - Successfully saved/updated 223 price records for 004830.
+2025-12-02 21:24:18,906 - INFO - Successfully saved/updated 223 price records for 004835.
+2025-12-02 21:24:19,065 - INFO - Successfully saved/updated 223 price records for 004840.
+2025-12-02 21:24:19,215 - INFO - Successfully saved/updated 223 price records for 004870.
+2025-12-02 21:24:19,355 - INFO - Successfully saved/updated 223 price records for 004890.
+2025-12-02 21:24:19,500 - INFO - Successfully saved/updated 223 price records for 004910.
+2025-12-02 21:24:19,649 - INFO - Successfully saved/updated 223 price records for 004920.
+2025-12-02 21:24:19,792 - INFO - Successfully saved/updated 223 price records for 004960.
+2025-12-02 21:24:19,958 - INFO - Successfully saved/updated 223 price records for 004970.
+2025-12-02 21:24:20,105 - INFO - Successfully saved/updated 223 price records for 004980.
+2025-12-02 21:24:20,252 - INFO - Successfully saved/updated 223 price records for 004985.
+2025-12-02 21:24:20,402 - INFO - Successfully saved/updated 223 price records for 004990.
+2025-12-02 21:24:20,543 - INFO - Successfully saved/updated 223 price records for 00499K.
+2025-12-02 21:24:20,690 - INFO - Successfully saved/updated 223 price records for 005010.
+2025-12-02 21:24:20,826 - INFO - Successfully saved/updated 223 price records for 005030.
+2025-12-02 21:24:20,971 - INFO - Successfully saved/updated 223 price records for 005070.
+2025-12-02 21:24:21,120 - INFO - Successfully saved/updated 223 price records for 005090.
+2025-12-02 21:24:21,272 - INFO - Successfully saved/updated 223 price records for 005110.
+2025-12-02 21:24:21,417 - INFO - Successfully saved/updated 223 price records for 005160.
+2025-12-02 21:24:21,564 - INFO - Successfully saved/updated 223 price records for 005180.
+2025-12-02 21:24:21,720 - INFO - Successfully saved/updated 223 price records for 005250.
+2025-12-02 21:24:21,879 - INFO - Successfully saved/updated 223 price records for 005257.
+2025-12-02 21:24:22,042 - INFO - Successfully saved/updated 223 price records for 005290.
+2025-12-02 21:24:22,190 - INFO - Successfully saved/updated 223 price records for 005300.
+2025-12-02 21:24:22,337 - INFO - Successfully saved/updated 223 price records for 005305.
+2025-12-02 21:24:22,480 - INFO - Successfully saved/updated 223 price records for 005320.
+2025-12-02 21:24:22,620 - INFO - Successfully saved/updated 223 price records for 005360.
+2025-12-02 21:24:22,767 - INFO - Successfully saved/updated 223 price records for 005380.
+2025-12-02 21:24:22,920 - INFO - Successfully saved/updated 223 price records for 005385.
+2025-12-02 21:24:23,062 - INFO - Successfully saved/updated 223 price records for 005387.
+2025-12-02 21:24:23,208 - INFO - Successfully saved/updated 223 price records for 005389.
+2025-12-02 21:24:23,355 - INFO - Successfully saved/updated 223 price records for 005420.
+2025-12-02 21:24:23,510 - INFO - Successfully saved/updated 223 price records for 005430.
+2025-12-02 21:24:23,654 - INFO - Successfully saved/updated 223 price records for 005440.
+2025-12-02 21:24:23,801 - INFO - Successfully saved/updated 223 price records for 005490.
+2025-12-02 21:24:23,945 - INFO - Successfully saved/updated 223 price records for 005500.
+2025-12-02 21:24:24,099 - INFO - Successfully saved/updated 223 price records for 005610.
+2025-12-02 21:24:24,254 - INFO - Successfully saved/updated 223 price records for 005670.
+2025-12-02 21:24:24,411 - INFO - Successfully saved/updated 223 price records for 005680.
+2025-12-02 21:24:24,556 - INFO - Successfully saved/updated 223 price records for 005690.
+2025-12-02 21:24:24,698 - INFO - Successfully saved/updated 223 price records for 005710.
+2025-12-02 21:24:24,843 - INFO - Successfully saved/updated 223 price records for 005720.
+2025-12-02 21:24:24,983 - INFO - Successfully saved/updated 223 price records for 005725.
+2025-12-02 21:24:25,130 - INFO - Successfully saved/updated 223 price records for 005740.
+2025-12-02 21:24:25,275 - INFO - Successfully saved/updated 223 price records for 005745.
+2025-12-02 21:24:25,417 - INFO - Successfully saved/updated 223 price records for 005750.
+2025-12-02 21:24:25,562 - INFO - Successfully saved/updated 223 price records for 005800.
+2025-12-02 21:24:25,705 - INFO - Successfully saved/updated 223 price records for 005810.
+2025-12-02 21:24:25,849 - INFO - Successfully saved/updated 223 price records for 005820.
+2025-12-02 21:24:25,993 - INFO - Successfully saved/updated 223 price records for 005830.
+2025-12-02 21:24:26,134 - INFO - Successfully saved/updated 223 price records for 005850.
+2025-12-02 21:24:26,280 - INFO - Successfully saved/updated 223 price records for 005860.
+2025-12-02 21:24:26,435 - INFO - Successfully saved/updated 223 price records for 005870.
+2025-12-02 21:24:26,581 - INFO - Successfully saved/updated 223 price records for 005880.
+2025-12-02 21:24:26,726 - INFO - Successfully saved/updated 223 price records for 005930.
+2025-12-02 21:24:26,882 - INFO - Successfully saved/updated 223 price records for 005935.
+2025-12-02 21:24:27,028 - INFO - Successfully saved/updated 223 price records for 005940.
+2025-12-02 21:24:27,179 - INFO - Successfully saved/updated 223 price records for 005945.
+2025-12-02 21:24:27,324 - INFO - Successfully saved/updated 223 price records for 005950.
+2025-12-02 21:24:27,477 - INFO - Successfully saved/updated 223 price records for 005960.
+2025-12-02 21:24:27,628 - INFO - Successfully saved/updated 223 price records for 005965.
+2025-12-02 21:24:27,780 - INFO - Successfully saved/updated 223 price records for 005990.
+2025-12-02 21:24:27,935 - INFO - Successfully saved/updated 223 price records for 006040.
+2025-12-02 21:24:28,076 - INFO - Successfully saved/updated 223 price records for 006050.
+2025-12-02 21:24:28,222 - INFO - Successfully saved/updated 223 price records for 006060.
+2025-12-02 21:24:28,367 - INFO - Successfully saved/updated 223 price records for 006090.
+2025-12-02 21:24:28,514 - INFO - Successfully saved/updated 223 price records for 006110.
+2025-12-02 21:24:28,665 - INFO - Successfully saved/updated 223 price records for 006120.
+2025-12-02 21:24:28,817 - INFO - Successfully saved/updated 223 price records for 006125.
+2025-12-02 21:24:28,963 - INFO - Successfully saved/updated 223 price records for 006140.
+2025-12-02 21:24:29,114 - INFO - Successfully saved/updated 223 price records for 006200.
+2025-12-02 21:24:29,263 - INFO - Successfully saved/updated 223 price records for 006220.
+2025-12-02 21:24:29,406 - INFO - Successfully saved/updated 223 price records for 006260.
+2025-12-02 21:24:29,547 - INFO - Successfully saved/updated 223 price records for 006280.
+2025-12-02 21:24:29,700 - INFO - Successfully saved/updated 223 price records for 006340.
+2025-12-02 21:24:29,850 - INFO - Successfully saved/updated 223 price records for 006345.
+2025-12-02 21:24:29,995 - INFO - Successfully saved/updated 223 price records for 006360.
+2025-12-02 21:24:30,142 - INFO - Successfully saved/updated 223 price records for 006370.
+2025-12-02 21:24:30,285 - INFO - Successfully saved/updated 223 price records for 006380.
+2025-12-02 21:24:30,429 - INFO - Successfully saved/updated 223 price records for 006400.
+2025-12-02 21:24:30,573 - INFO - Successfully saved/updated 223 price records for 006405.
+2025-12-02 21:24:30,725 - INFO - Successfully saved/updated 223 price records for 006490.
+2025-12-02 21:24:30,866 - INFO - Successfully saved/updated 223 price records for 006570.
+2025-12-02 21:24:31,012 - INFO - Successfully saved/updated 223 price records for 006620.
+2025-12-02 21:24:31,167 - INFO - Successfully saved/updated 223 price records for 006650.
+2025-12-02 21:24:31,322 - INFO - Successfully saved/updated 223 price records for 006660.
+2025-12-02 21:24:31,468 - INFO - Successfully saved/updated 223 price records for 006730.
+2025-12-02 21:24:31,625 - INFO - Successfully saved/updated 223 price records for 006740.
+2025-12-02 21:24:31,769 - INFO - Successfully saved/updated 223 price records for 006800.
+2025-12-02 21:24:31,920 - INFO - Successfully saved/updated 223 price records for 006805.
+2025-12-02 21:24:32,047 - INFO - Successfully saved/updated 223 price records for 00680K.
+2025-12-02 21:24:32,200 - INFO - Successfully saved/updated 223 price records for 006840.
+2025-12-02 21:24:32,350 - INFO - Successfully saved/updated 223 price records for 006880.
+2025-12-02 21:24:32,496 - INFO - Successfully saved/updated 223 price records for 006890.
+2025-12-02 21:24:32,755 - ERROR - Failed to process data for 0068Y0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0068Y0?period1=1735657200&period2=1764678272&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:32,903 - INFO - Successfully saved/updated 223 price records for 006910.
+2025-12-02 21:24:33,048 - INFO - Successfully saved/updated 223 price records for 006920.
+2025-12-02 21:24:33,201 - INFO - Successfully saved/updated 223 price records for 006980.
+2025-12-02 21:24:33,346 - INFO - Successfully saved/updated 223 price records for 007070.
+2025-12-02 21:24:33,492 - INFO - Successfully saved/updated 223 price records for 007110.
+2025-12-02 21:24:33,645 - INFO - Successfully saved/updated 223 price records for 007120.
+2025-12-02 21:24:33,795 - INFO - Successfully saved/updated 223 price records for 007160.
+2025-12-02 21:24:34,026 - ERROR - Failed to process data for 0071M0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0071M0?period1=1735657200&period2=1764678273&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:34,179 - INFO - Successfully saved/updated 223 price records for 007210.
+2025-12-02 21:24:34,329 - INFO - Successfully saved/updated 223 price records for 007280.
+2025-12-02 21:24:34,564 - ERROR - Failed to process data for 0072Z0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0072Z0?period1=1735657200&period2=1764678274&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:34,715 - INFO - Successfully saved/updated 223 price records for 007310.
+2025-12-02 21:24:34,857 - INFO - Successfully saved/updated 223 price records for 007330.
+2025-12-02 21:24:35,004 - INFO - Successfully saved/updated 223 price records for 007340.
+2025-12-02 21:24:35,157 - INFO - Successfully saved/updated 223 price records for 007370.
+2025-12-02 21:24:35,297 - INFO - Successfully saved/updated 223 price records for 007390.
+2025-12-02 21:24:35,444 - INFO - Successfully saved/updated 223 price records for 007460.
+2025-12-02 21:24:35,597 - INFO - Successfully saved/updated 223 price records for 007530.
+2025-12-02 21:24:35,739 - INFO - Successfully saved/updated 223 price records for 007540.
+2025-12-02 21:24:35,883 - INFO - Successfully saved/updated 223 price records for 007570.
+2025-12-02 21:24:36,028 - INFO - Successfully saved/updated 223 price records for 007575.
+2025-12-02 21:24:36,172 - INFO - Successfully saved/updated 223 price records for 007590.
+2025-12-02 21:24:36,312 - INFO - Successfully saved/updated 223 price records for 007610.
+2025-12-02 21:24:36,466 - INFO - Successfully saved/updated 223 price records for 007660.
+2025-12-02 21:24:36,599 - INFO - Successfully saved/updated 223 price records for 007680.
+2025-12-02 21:24:36,752 - INFO - Successfully saved/updated 223 price records for 007690.
+2025-12-02 21:24:36,899 - INFO - Successfully saved/updated 223 price records for 007700.
+2025-12-02 21:24:37,048 - INFO - Successfully saved/updated 223 price records for 007720.
+2025-12-02 21:24:37,202 - INFO - Successfully saved/updated 223 price records for 007770.
+2025-12-02 21:24:37,341 - INFO - Successfully saved/updated 223 price records for 007810.
+2025-12-02 21:24:37,495 - INFO - Successfully saved/updated 223 price records for 007815.
+2025-12-02 21:24:37,637 - INFO - Successfully saved/updated 223 price records for 00781K.
+2025-12-02 21:24:37,778 - INFO - Successfully saved/updated 223 price records for 007820.
+2025-12-02 21:24:37,919 - INFO - Successfully saved/updated 223 price records for 007860.
+2025-12-02 21:24:38,080 - INFO - Successfully saved/updated 223 price records for 007980.
+2025-12-02 21:24:38,227 - INFO - Successfully saved/updated 223 price records for 008040.
+2025-12-02 21:24:38,379 - INFO - Successfully saved/updated 223 price records for 008060.
+2025-12-02 21:24:38,507 - INFO - Successfully saved/updated 223 price records for 00806K.
+2025-12-02 21:24:38,645 - INFO - Successfully saved/updated 223 price records for 008110.
+2025-12-02 21:24:38,797 - INFO - Successfully saved/updated 223 price records for 008250.
+2025-12-02 21:24:38,957 - INFO - Successfully saved/updated 223 price records for 008260.
+2025-12-02 21:24:39,099 - INFO - Successfully saved/updated 223 price records for 008290.
+2025-12-02 21:24:39,255 - INFO - Successfully saved/updated 223 price records for 008350.
+2025-12-02 21:24:39,415 - INFO - Successfully saved/updated 223 price records for 008355.
+2025-12-02 21:24:39,567 - INFO - Successfully saved/updated 223 price records for 008370.
+2025-12-02 21:24:39,717 - INFO - Successfully saved/updated 223 price records for 008420.
+2025-12-02 21:24:39,869 - INFO - Successfully saved/updated 223 price records for 008470.
+2025-12-02 21:24:40,015 - INFO - Successfully saved/updated 223 price records for 008490.
+2025-12-02 21:24:40,166 - INFO - Successfully saved/updated 223 price records for 008500.
+2025-12-02 21:24:40,318 - INFO - Successfully saved/updated 223 price records for 008600.
+2025-12-02 21:24:40,471 - INFO - Successfully saved/updated 223 price records for 008700.
+2025-12-02 21:24:40,617 - INFO - Successfully saved/updated 223 price records for 008730.
+2025-12-02 21:24:40,759 - INFO - Successfully saved/updated 223 price records for 008770.
+2025-12-02 21:24:40,906 - INFO - Successfully saved/updated 223 price records for 008775.
+2025-12-02 21:24:41,055 - INFO - Successfully saved/updated 223 price records for 008830.
+2025-12-02 21:24:41,211 - INFO - Successfully saved/updated 223 price records for 008870.
+2025-12-02 21:24:41,365 - INFO - Successfully saved/updated 223 price records for 008930.
+2025-12-02 21:24:41,505 - INFO - Successfully saved/updated 223 price records for 008970.
+2025-12-02 21:24:41,650 - INFO - Successfully saved/updated 223 price records for 009070.
+2025-12-02 21:24:41,803 - INFO - Successfully saved/updated 223 price records for 009140.
+2025-12-02 21:24:41,950 - INFO - Successfully saved/updated 223 price records for 009150.
+2025-12-02 21:24:42,094 - INFO - Successfully saved/updated 223 price records for 009155.
+2025-12-02 21:24:42,244 - INFO - Successfully saved/updated 223 price records for 009160.
+2025-12-02 21:24:42,381 - INFO - Successfully saved/updated 223 price records for 009180.
+2025-12-02 21:24:42,522 - INFO - Successfully saved/updated 223 price records for 009190.
+2025-12-02 21:24:42,794 - ERROR - Failed to process data for 0091W0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0091W0?period1=1735657200&period2=1764678282&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:42,953 - INFO - Successfully saved/updated 223 price records for 009200.
+2025-12-02 21:24:43,091 - INFO - Successfully saved/updated 223 price records for 009240.
+2025-12-02 21:24:43,235 - INFO - Successfully saved/updated 223 price records for 009270.
+2025-12-02 21:24:43,385 - INFO - Successfully saved/updated 223 price records for 009290.
+2025-12-02 21:24:43,526 - INFO - Successfully saved/updated 223 price records for 009300.
+2025-12-02 21:24:43,672 - INFO - Successfully saved/updated 223 price records for 009310.
+2025-12-02 21:24:43,825 - INFO - Successfully saved/updated 223 price records for 009320.
+2025-12-02 21:24:44,072 - ERROR - Failed to process data for 0093G0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0093G0?period1=1735657200&period2=1764678283&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:44,225 - INFO - Successfully saved/updated 223 price records for 009410.
+2025-12-02 21:24:44,376 - INFO - Successfully saved/updated 223 price records for 009415.
+2025-12-02 21:24:44,516 - INFO - Successfully saved/updated 223 price records for 009420.
+2025-12-02 21:24:44,659 - INFO - Successfully saved/updated 223 price records for 009440.
+2025-12-02 21:24:44,801 - INFO - Successfully saved/updated 223 price records for 009450.
+2025-12-02 21:24:44,955 - INFO - Successfully saved/updated 223 price records for 009460.
+2025-12-02 21:24:45,109 - INFO - Successfully saved/updated 223 price records for 009470.
+2025-12-02 21:24:45,262 - INFO - Successfully saved/updated 223 price records for 009520.
+2025-12-02 21:24:45,405 - INFO - Successfully saved/updated 223 price records for 009540.
+2025-12-02 21:24:45,555 - INFO - Successfully saved/updated 223 price records for 009580.
+2025-12-02 21:24:45,706 - INFO - Successfully saved/updated 223 price records for 009620.
+2025-12-02 21:24:45,860 - INFO - Successfully saved/updated 223 price records for 009680.
+2025-12-02 21:24:46,105 - ERROR - Failed to process data for 0096B0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0096B0?period1=1735657200&period2=1764678285&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:46,347 - ERROR - Failed to process data for 0096D0: 404 Client Error: Not Found for url: https://query2.finance.yahoo.com/v8/finance/chart/0096D0?period1=1735657200&period2=1764678286&interval=1d&includeAdjustedClose=true
+2025-12-02 21:24:46,497 - INFO - Successfully saved/updated 223 price records for 009730.
+2025-12-02 21:24:46,642 - INFO - Successfully saved/updated 223 price records for 009770.
+2025-12-02 21:24:46,785 - INFO - Successfully saved/updated 223 price records for 009780.
+2025-12-02 21:24:46,928 - INFO - Successfully saved/updated 223 price records for 009810.
+2025-12-02 21:24:47,075 - INFO - Successfully saved/updated 223 price records for 009830.
+2025-12-02 21:24:47,219 - INFO - Successfully saved/updated 223 price records for 009835.
+2025-12-02 21:24:47,342 - INFO - Successfully saved/updated 223 price records for 009900.
+2025-12-02 21:24:47,489 - INFO - Successfully saved/updated 223 price records for 009970.
+2025-12-02 21:24:47,623 - INFO - Successfully saved/updated 223 price records for 010040.
+2025-12-02 21:24:47,773 - INFO - Successfully saved/updated 223 price records for 010060.
+2025-12-02 21:24:47,921 - INFO - Successfully saved/updated 223 price records for 010100.
+2025-12-02 21:24:48,076 - INFO - Successfully saved/updated 223 price records for 010120.
+2025-12-02 21:24:48,223 - INFO - Successfully saved/updated 223 price records for 010130.
+2025-12-02 21:24:48,371 - INFO - Successfully saved/updated 223 price records for 010140.
+2025-12-02 21:24:48,513 - INFO - Successfully saved/updated 223 price records for 010170.
+2025-12-02 21:24:48,655 - INFO - Successfully saved/updated 223 price records for 010240.
+2025-12-02 21:24:48,799 - INFO - Successfully saved/updated 223 price records for 010280.
+2025-12-02 21:24:48,933 - INFO - Successfully saved/updated 223 price records for 010400.
+2025-12-02 21:24:49,080 - INFO - Successfully saved/updated 223 price records for 010470.
+2025-12-02 21:24:49,221 - INFO - Successfully saved/updated 223 price records for 010580.
+2025-12-02 21:24:49,379 - INFO - Successfully saved/updated 223 price records for 010600.
+2025-12-02 21:24:49,533 - INFO - Successfully saved/updated 223 price records for 010620.
+2025-12-02 21:24:49,675 - INFO - Successfully saved/updated 223 price records for 010640.
+2025-12-02 21:24:49,831 - INFO - Successfully saved/updated 223 price records for 010660.
+2025-12-02 21:24:49,980 - INFO - Successfully saved/updated 223 price records for 010690.
+2025-12-02 21:24:50,119 - INFO - Successfully saved/updated 223 price records for 010770.
+2025-12-02 21:24:50,265 - INFO - Successfully saved/updated 223 price records for 010780.
+2025-12-02 21:24:50,412 - INFO - Successfully saved/updated 223 price records for 010820.
+2025-12-02 21:24:50,557 - INFO - Successfully saved/updated 223 price records for 010950.
+2025-12-02 21:24:50,700 - INFO - Successfully saved/updated 223 price records for 010955.
+2025-12-02 21:24:50,855 - INFO - Successfully saved/updated 223 price records for 010960.
+2025-12-02 21:24:51,006 - INFO - Successfully saved/updated 223 price records for 011000.
+2025-12-02 21:24:51,162 - INFO - Successfully saved/updated 223 price records for 011040.
+2025-12-02 21:24:51,304 - INFO - Successfully saved/updated 223 price records for 011070.
+2025-12-02 21:24:51,446 - INFO - Successfully saved/updated 223 price records for 011080.
+2025-12-02 21:24:51,585 - INFO - Successfully saved/updated 223 price records for 011090.
+2025-12-02 21:24:51,732 - INFO - Successfully saved/updated 223 price records for 011150.
+2025-12-02 21:24:51,874 - INFO - Successfully saved/updated 223 price records for 011155.
+2025-12-02 21:24:52,021 - INFO - Successfully saved/updated 223 price records for 011170.
+2025-12-02 21:24:52,165 - INFO - Successfully saved/updated 223 price records for 011200.
+2025-12-02 21:24:52,380 - INFO - Successfully saved/updated 223 price records for 011210.
+2025-12-02 21:24:52,526 - INFO - Successfully saved/updated 223 price records for 011230.
+2025-12-02 21:24:52,681 - INFO - Successfully saved/updated 223 price records for 011280.
+2025-12-02 21:24:52,830 - INFO - Successfully saved/updated 223 price records for 011300.
+2025-12-02 21:24:52,970 - INFO - Successfully saved/updated 223 price records for 011320.
+2025-12-02 21:24:53,114 - INFO - Successfully saved/updated 223 price records for 011330.
+2025-12-02 21:24:53,266 - INFO - Successfully saved/updated 223 price records for 011370.
+2025-12-02 21:24:53,415 - INFO - Successfully saved/updated 223 price records for 011390.
+2025-12-02 21:24:53,415 - INFO - StockPriceManager 스크립트 종료: Tue Dec  2 21:24:53 2025
+2025-12-02 21:24:53,418 - INFO - MySQL connection is closed
+2025-12-02 21:24:53,419 - INFO - 데이터베이스 연결이 종료되었습니다.
+2025-12-02 21:29:40,182 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 21:29:40,182 - INFO - 데이터베이스 연결 성공.
+2025-12-02 21:29:40,183 - INFO - StockPriceManager 스크립트 시작: Tue Dec  2 21:29:40 2025
+2025-12-02 21:29:40,192 - INFO - Table 'prices' created or already exists.
+2025-12-02 21:29:40,192 - INFO - 주식 가격 정보 업데이트를 시작합니다.
+2025-12-02 21:29:40,198 - INFO - Fetching price data for 500 companies. Default start date: 20250101.
+2025-12-02 21:29:40,300 - INFO - No new price data to fetch for 000020 from 2025-12-03.
+2025-12-02 21:29:40,388 - INFO - No new price data to fetch for 000040 from 2025-12-03.
+2025-12-02 21:29:40,486 - INFO - No new price data to fetch for 000050 from 2025-12-03.
+2025-12-02 21:29:40,586 - INFO - No new price data to fetch for 000070 from 2025-12-03.
+2025-12-02 21:29:40,675 - INFO - No new price data to fetch for 000080 from 2025-12-03.
+2025-12-02 21:29:40,770 - INFO - No new price data to fetch for 000087 from 2025-12-03.
+2025-12-02 21:29:40,908 - INFO - No new price data to fetch for 000100 from 2025-12-03.
+2025-12-02 21:29:41,007 - INFO - No new price data to fetch for 000105 from 2025-12-03.
+2025-12-02 21:29:41,098 - INFO - No new price data to fetch for 000120 from 2025-12-03.
+2025-12-02 21:29:41,200 - INFO - No new price data to fetch for 000140 from 2025-12-03.
+2025-12-02 21:29:41,309 - INFO - No new price data to fetch for 000145 from 2025-12-03.
+2025-12-02 21:29:41,401 - INFO - No new price data to fetch for 000150 from 2025-12-03.
+2025-12-02 21:29:41,507 - INFO - No new price data to fetch for 000155 from 2025-12-03.
+2025-12-02 21:29:41,606 - INFO - No new price data to fetch for 000157 from 2025-12-03.
+2025-12-02 21:29:41,698 - INFO - No new price data to fetch for 000180 from 2025-12-03.
+2025-12-02 21:29:41,791 - INFO - No new price data to fetch for 000210 from 2025-12-03.
+2025-12-02 21:29:41,891 - INFO - No new price data to fetch for 000215 from 2025-12-03.
+2025-12-02 21:29:41,979 - INFO - No new price data to fetch for 000220 from 2025-12-03.
+2025-12-02 21:29:42,091 - INFO - No new price data to fetch for 000225 from 2025-12-03.
+2025-12-02 21:29:42,179 - INFO - No new price data to fetch for 000227 from 2025-12-03.
+2025-12-02 21:29:42,271 - INFO - No new price data to fetch for 000230 from 2025-12-03.
+2025-12-02 21:29:42,366 - INFO - No new price data to fetch for 000240 from 2025-12-03.
+2025-12-02 21:29:42,463 - INFO - No new price data to fetch for 000250 from 2025-12-03.
+2025-12-02 21:29:42,553 - INFO - No new price data to fetch for 000270 from 2025-12-03.
+2025-12-02 21:29:42,647 - INFO - No new price data to fetch for 000300 from 2025-12-03.
+2025-12-02 21:29:42,748 - INFO - No new price data to fetch for 000320 from 2025-12-03.
+2025-12-02 21:29:42,846 - INFO - No new price data to fetch for 000325 from 2025-12-03.
+2025-12-02 21:29:42,949 - INFO - No new price data to fetch for 000370 from 2025-12-03.
+2025-12-02 21:29:43,040 - INFO - No new price data to fetch for 000390 from 2025-12-03.
+2025-12-02 21:29:43,131 - INFO - No new price data to fetch for 000400 from 2025-12-03.
+2025-12-02 21:29:43,236 - INFO - No new price data to fetch for 000430 from 2025-12-03.
+2025-12-02 21:29:43,325 - INFO - No new price data to fetch for 000440 from 2025-12-03.
+2025-12-02 21:29:43,419 - INFO - No new price data to fetch for 000480 from 2025-12-03.
+2025-12-02 21:29:43,508 - INFO - No new price data to fetch for 000490 from 2025-12-03.
+2025-12-02 21:29:43,976 - WARNING - '0004Y0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:29:43,999 - INFO - '0004Y0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:29:44,108 - INFO - No new price data to fetch for 000500 from 2025-12-03.
+2025-12-02 21:29:44,198 - INFO - No new price data to fetch for 000520 from 2025-12-03.
+2025-12-02 21:29:44,288 - INFO - No new price data to fetch for 000540 from 2025-12-03.
+2025-12-02 21:29:44,378 - INFO - No new price data to fetch for 000545 from 2025-12-03.
+2025-12-02 21:29:44,479 - INFO - No new price data to fetch for 000590 from 2025-12-03.
+2025-12-02 21:29:44,572 - INFO - No new price data to fetch for 000640 from 2025-12-03.
+2025-12-02 21:29:44,663 - INFO - No new price data to fetch for 000650 from 2025-12-03.
+2025-12-02 21:29:44,768 - INFO - No new price data to fetch for 000660 from 2025-12-03.
+2025-12-02 21:29:44,872 - INFO - No new price data to fetch for 000670 from 2025-12-03.
+2025-12-02 21:29:44,965 - INFO - No new price data to fetch for 000680 from 2025-12-03.
+2025-12-02 21:29:45,063 - INFO - No new price data to fetch for 000700 from 2025-12-03.
+2025-12-02 21:29:45,155 - INFO - No new price data to fetch for 000720 from 2025-12-03.
+2025-12-02 21:29:45,247 - INFO - No new price data to fetch for 000725 from 2025-12-03.
+2025-12-02 21:29:45,354 - INFO - No new price data to fetch for 000760 from 2025-12-03.
+2025-12-02 21:29:45,452 - INFO - No new price data to fetch for 000810 from 2025-12-03.
+2025-12-02 21:29:45,553 - INFO - No new price data to fetch for 000815 from 2025-12-03.
+2025-12-02 21:29:45,652 - INFO - No new price data to fetch for 000850 from 2025-12-03.
+2025-12-02 21:29:45,754 - INFO - No new price data to fetch for 000860 from 2025-12-03.
+2025-12-02 21:29:45,845 - INFO - No new price data to fetch for 000880 from 2025-12-03.
+2025-12-02 21:29:45,943 - INFO - No new price data to fetch for 00088K from 2025-12-03.
+2025-12-02 21:29:46,045 - INFO - No new price data to fetch for 000890 from 2025-12-03.
+2025-12-02 21:29:46,350 - WARNING - '0008Z0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:29:46,373 - INFO - '0008Z0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:29:46,468 - INFO - No new price data to fetch for 000910 from 2025-12-03.
+2025-12-02 21:29:46,560 - INFO - No new price data to fetch for 000950 from 2025-12-03.
+2025-12-02 21:29:46,660 - INFO - No new price data to fetch for 000970 from 2025-12-03.
+2025-12-02 21:29:46,755 - INFO - No new price data to fetch for 000990 from 2025-12-03.
+2025-12-02 21:29:46,849 - INFO - No new price data to fetch for 001000 from 2025-12-03.
+2025-12-02 21:29:46,934 - INFO - No new price data to fetch for 001020 from 2025-12-03.
+2025-12-02 21:29:47,025 - INFO - No new price data to fetch for 001040 from 2025-12-03.
+2025-12-02 21:29:47,121 - INFO - No new price data to fetch for 001045 from 2025-12-03.
+2025-12-02 21:29:47,194 - INFO - No new price data to fetch for 00104K from 2025-12-03.
+2025-12-02 21:29:47,290 - INFO - No new price data to fetch for 001060 from 2025-12-03.
+2025-12-02 21:29:47,377 - INFO - No new price data to fetch for 001065 from 2025-12-03.
+2025-12-02 21:29:47,467 - INFO - No new price data to fetch for 001067 from 2025-12-03.
+2025-12-02 21:29:47,568 - INFO - No new price data to fetch for 001070 from 2025-12-03.
+2025-12-02 21:29:47,665 - INFO - No new price data to fetch for 001080 from 2025-12-03.
+2025-12-02 21:29:47,911 - WARNING - '0010V0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:29:47,934 - INFO - '0010V0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:29:48,030 - INFO - No new price data to fetch for 001120 from 2025-12-03.
+2025-12-02 21:29:48,122 - INFO - No new price data to fetch for 001130 from 2025-12-03.
+2025-12-02 21:29:48,208 - INFO - No new price data to fetch for 001140 from 2025-12-03.
+2025-12-02 21:29:48,298 - INFO - No new price data to fetch for 001200 from 2025-12-03.
+2025-12-02 21:29:48,388 - INFO - No new price data to fetch for 001210 from 2025-12-03.
+2025-12-02 21:29:48,486 - INFO - No new price data to fetch for 001230 from 2025-12-03.
+2025-12-02 21:29:48,575 - INFO - No new price data to fetch for 001250 from 2025-12-03.
+2025-12-02 21:29:48,671 - INFO - No new price data to fetch for 001260 from 2025-12-03.
+2025-12-02 21:29:48,765 - INFO - No new price data to fetch for 001270 from 2025-12-03.
+2025-12-02 21:29:48,864 - INFO - No new price data to fetch for 001275 from 2025-12-03.
+2025-12-02 21:29:48,963 - INFO - No new price data to fetch for 001290 from 2025-12-03.
+2025-12-02 21:29:49,058 - INFO - No new price data to fetch for 001340 from 2025-12-03.
+2025-12-02 21:29:49,150 - INFO - No new price data to fetch for 001360 from 2025-12-03.
+2025-12-02 21:29:49,252 - INFO - No new price data to fetch for 001380 from 2025-12-03.
+2025-12-02 21:29:49,347 - INFO - No new price data to fetch for 001390 from 2025-12-03.
+2025-12-02 21:29:49,442 - INFO - No new price data to fetch for 001420 from 2025-12-03.
+2025-12-02 21:29:49,537 - INFO - No new price data to fetch for 001430 from 2025-12-03.
+2025-12-02 21:29:49,636 - INFO - No new price data to fetch for 001440 from 2025-12-03.
+2025-12-02 21:29:49,736 - INFO - No new price data to fetch for 001450 from 2025-12-03.
+2025-12-02 21:29:49,839 - INFO - No new price data to fetch for 001460 from 2025-12-03.
+2025-12-02 21:29:49,942 - INFO - No new price data to fetch for 001465 from 2025-12-03.
+2025-12-02 21:29:50,029 - INFO - No new price data to fetch for 001470 from 2025-12-03.
+2025-12-02 21:29:50,131 - INFO - No new price data to fetch for 001500 from 2025-12-03.
+2025-12-02 21:29:50,226 - INFO - No new price data to fetch for 001510 from 2025-12-03.
+2025-12-02 21:29:50,320 - INFO - No new price data to fetch for 001515 from 2025-12-03.
+2025-12-02 21:29:50,415 - INFO - No new price data to fetch for 001520 from 2025-12-03.
+2025-12-02 21:29:50,512 - INFO - No new price data to fetch for 001525 from 2025-12-03.
+2025-12-02 21:29:50,609 - INFO - No new price data to fetch for 001527 from 2025-12-03.
+2025-12-02 21:29:50,700 - INFO - No new price data to fetch for 001530 from 2025-12-03.
+2025-12-02 21:29:50,796 - INFO - No new price data to fetch for 001540 from 2025-12-03.
+2025-12-02 21:29:50,901 - INFO - No new price data to fetch for 001550 from 2025-12-03.
+2025-12-02 21:29:50,992 - INFO - No new price data to fetch for 001560 from 2025-12-03.
+2025-12-02 21:29:51,085 - INFO - No new price data to fetch for 001570 from 2025-12-03.
+2025-12-02 21:29:51,391 - WARNING - '0015G0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:29:51,413 - INFO - '0015G0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:29:51,717 - WARNING - '0015N0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:29:51,736 - INFO - '0015N0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:29:51,831 - INFO - No new price data to fetch for 001620 from 2025-12-03.
+2025-12-02 21:29:51,933 - INFO - No new price data to fetch for 001630 from 2025-12-03.
+2025-12-02 21:29:52,032 - INFO - No new price data to fetch for 001680 from 2025-12-03.
+2025-12-02 21:29:52,120 - INFO - No new price data to fetch for 001685 from 2025-12-03.
+2025-12-02 21:29:52,211 - INFO - No new price data to fetch for 001720 from 2025-12-03.
+2025-12-02 21:29:52,311 - INFO - No new price data to fetch for 001740 from 2025-12-03.
+2025-12-02 21:29:52,406 - INFO - No new price data to fetch for 001750 from 2025-12-03.
+2025-12-02 21:29:52,495 - INFO - No new price data to fetch for 001755 from 2025-12-03.
+2025-12-02 21:29:52,588 - INFO - No new price data to fetch for 001770 from 2025-12-03.
+2025-12-02 21:29:52,691 - INFO - No new price data to fetch for 001780 from 2025-12-03.
+2025-12-02 21:29:52,787 - INFO - No new price data to fetch for 001790 from 2025-12-03.
+2025-12-02 21:29:52,886 - INFO - No new price data to fetch for 001795 from 2025-12-03.
+2025-12-02 21:29:52,982 - INFO - No new price data to fetch for 001800 from 2025-12-03.
+2025-12-02 21:29:53,087 - INFO - No new price data to fetch for 001810 from 2025-12-03.
+2025-12-02 21:29:53,189 - INFO - No new price data to fetch for 001820 from 2025-12-03.
+2025-12-02 21:29:53,281 - INFO - No new price data to fetch for 001840 from 2025-12-03.
+2025-12-02 21:29:53,372 - INFO - No new price data to fetch for 001940 from 2025-12-03.
+2025-12-02 21:29:53,462 - INFO - No new price data to fetch for 002020 from 2025-12-03.
+2025-12-02 21:29:53,566 - INFO - No new price data to fetch for 002025 from 2025-12-03.
+2025-12-02 21:29:53,661 - INFO - No new price data to fetch for 002030 from 2025-12-03.
+2025-12-02 21:29:53,761 - INFO - No new price data to fetch for 002070 from 2025-12-03.
+2025-12-02 21:29:53,856 - INFO - No new price data to fetch for 002100 from 2025-12-03.
+2025-12-02 21:29:53,949 - INFO - No new price data to fetch for 002140 from 2025-12-03.
+2025-12-02 21:29:54,043 - INFO - No new price data to fetch for 002150 from 2025-12-03.
+2025-12-02 21:29:54,138 - INFO - No new price data to fetch for 002170 from 2025-12-03.
+2025-12-02 21:29:54,222 - INFO - No new price data to fetch for 002200 from 2025-12-03.
+2025-12-02 21:29:54,312 - INFO - No new price data to fetch for 002210 from 2025-12-03.
+2025-12-02 21:29:54,415 - INFO - No new price data to fetch for 002220 from 2025-12-03.
+2025-12-02 21:29:54,513 - INFO - No new price data to fetch for 002230 from 2025-12-03.
+2025-12-02 21:29:54,607 - INFO - No new price data to fetch for 002240 from 2025-12-03.
+2025-12-02 21:29:54,702 - INFO - No new price data to fetch for 002290 from 2025-12-03.
+2025-12-02 21:29:54,794 - INFO - No new price data to fetch for 002310 from 2025-12-03.
+2025-12-02 21:29:54,889 - INFO - No new price data to fetch for 002320 from 2025-12-03.
+2025-12-02 21:29:54,988 - INFO - No new price data to fetch for 002350 from 2025-12-03.
+2025-12-02 21:29:55,087 - INFO - No new price data to fetch for 002355 from 2025-12-03.
+2025-12-02 21:29:55,186 - INFO - No new price data to fetch for 002360 from 2025-12-03.
+2025-12-02 21:29:55,280 - INFO - No new price data to fetch for 002380 from 2025-12-03.
+2025-12-02 21:29:55,385 - INFO - No new price data to fetch for 002390 from 2025-12-03.
+2025-12-02 21:29:55,479 - INFO - No new price data to fetch for 002410 from 2025-12-03.
+2025-12-02 21:29:55,573 - INFO - No new price data to fetch for 002420 from 2025-12-03.
+2025-12-02 21:29:55,668 - INFO - No new price data to fetch for 002450 from 2025-12-03.
+2025-12-02 21:29:55,767 - INFO - No new price data to fetch for 002460 from 2025-12-03.
+2025-12-02 21:29:55,869 - INFO - No new price data to fetch for 002600 from 2025-12-03.
+2025-12-02 21:29:55,968 - INFO - No new price data to fetch for 002620 from 2025-12-03.
+2025-12-02 21:29:56,073 - INFO - No new price data to fetch for 002630 from 2025-12-03.
+2025-12-02 21:29:56,176 - INFO - No new price data to fetch for 002680 from 2025-12-03.
+2025-12-02 21:29:56,262 - INFO - No new price data to fetch for 002690 from 2025-12-03.
+2025-12-02 21:29:56,364 - INFO - No new price data to fetch for 002700 from 2025-12-03.
+2025-12-02 21:29:56,459 - INFO - No new price data to fetch for 002710 from 2025-12-03.
+2025-12-02 21:29:56,550 - INFO - No new price data to fetch for 002720 from 2025-12-03.
+2025-12-02 21:29:56,650 - INFO - No new price data to fetch for 002760 from 2025-12-03.
+2025-12-02 21:29:56,741 - INFO - No new price data to fetch for 002780 from 2025-12-03.
+2025-12-02 21:29:56,841 - INFO - No new price data to fetch for 002785 from 2025-12-03.
+2025-12-02 21:29:56,933 - INFO - No new price data to fetch for 002787 from 2025-12-03.
+2025-12-02 21:29:57,031 - INFO - No new price data to fetch for 002790 from 2025-12-03.
+2025-12-02 21:29:57,125 - INFO - No new price data to fetch for 002795 from 2025-12-03.
+2025-12-02 21:29:57,200 - INFO - No new price data to fetch for 00279K from 2025-12-03.
+2025-12-02 21:29:57,297 - INFO - No new price data to fetch for 002800 from 2025-12-03.
+2025-12-02 21:29:57,395 - INFO - No new price data to fetch for 002810 from 2025-12-03.
+2025-12-02 21:29:57,494 - INFO - No new price data to fetch for 002820 from 2025-12-03.
+2025-12-02 21:29:57,600 - INFO - No new price data to fetch for 002840 from 2025-12-03.
+2025-12-02 21:29:57,696 - INFO - No new price data to fetch for 002870 from 2025-12-03.
+2025-12-02 21:29:57,802 - INFO - No new price data to fetch for 002880 from 2025-12-03.
+2025-12-02 21:29:57,899 - INFO - No new price data to fetch for 002900 from 2025-12-03.
+2025-12-02 21:29:58,000 - INFO - No new price data to fetch for 002920 from 2025-12-03.
+2025-12-02 21:29:58,095 - INFO - No new price data to fetch for 002960 from 2025-12-03.
+2025-12-02 21:29:58,203 - INFO - No new price data to fetch for 002990 from 2025-12-03.
+2025-12-02 21:29:58,296 - INFO - No new price data to fetch for 002995 from 2025-12-03.
+2025-12-02 21:29:58,395 - INFO - No new price data to fetch for 003000 from 2025-12-03.
+2025-12-02 21:29:58,486 - INFO - No new price data to fetch for 003010 from 2025-12-03.
+2025-12-02 21:29:58,589 - INFO - No new price data to fetch for 003030 from 2025-12-03.
+2025-12-02 21:29:58,686 - INFO - No new price data to fetch for 003060 from 2025-12-03.
+2025-12-02 21:29:58,780 - INFO - No new price data to fetch for 003070 from 2025-12-03.
+2025-12-02 21:29:58,886 - INFO - No new price data to fetch for 003075 from 2025-12-03.
+2025-12-02 21:29:58,980 - INFO - No new price data to fetch for 003080 from 2025-12-03.
+2025-12-02 21:29:59,082 - INFO - No new price data to fetch for 003090 from 2025-12-03.
+2025-12-02 21:29:59,399 - WARNING - '0030R0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:29:59,421 - INFO - '0030R0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:29:59,525 - INFO - No new price data to fetch for 003100 from 2025-12-03.
+2025-12-02 21:29:59,614 - INFO - No new price data to fetch for 003120 from 2025-12-03.
+2025-12-02 21:29:59,718 - INFO - No new price data to fetch for 003160 from 2025-12-03.
+2025-12-02 21:29:59,828 - INFO - No new price data to fetch for 003200 from 2025-12-03.
+2025-12-02 21:29:59,927 - INFO - No new price data to fetch for 003220 from 2025-12-03.
+2025-12-02 21:30:00,028 - INFO - No new price data to fetch for 003230 from 2025-12-03.
+2025-12-02 21:30:00,128 - INFO - No new price data to fetch for 003240 from 2025-12-03.
+2025-12-02 21:30:00,223 - INFO - No new price data to fetch for 003280 from 2025-12-03.
+2025-12-02 21:30:00,325 - INFO - No new price data to fetch for 003300 from 2025-12-03.
+2025-12-02 21:30:00,429 - INFO - No new price data to fetch for 003310 from 2025-12-03.
+2025-12-02 21:30:00,528 - INFO - No new price data to fetch for 003350 from 2025-12-03.
+2025-12-02 21:30:00,613 - INFO - No new price data to fetch for 003380 from 2025-12-03.
+2025-12-02 21:30:00,716 - INFO - No new price data to fetch for 003460 from 2025-12-03.
+2025-12-02 21:30:00,807 - INFO - No new price data to fetch for 003465 from 2025-12-03.
+2025-12-02 21:30:00,902 - INFO - No new price data to fetch for 003470 from 2025-12-03.
+2025-12-02 21:30:01,013 - INFO - No new price data to fetch for 003475 from 2025-12-03.
+2025-12-02 21:30:01,121 - INFO - No new price data to fetch for 003480 from 2025-12-03.
+2025-12-02 21:30:01,216 - INFO - No new price data to fetch for 003490 from 2025-12-03.
+2025-12-02 21:30:01,318 - INFO - No new price data to fetch for 003495 from 2025-12-03.
+2025-12-02 21:30:01,427 - INFO - No new price data to fetch for 003520 from 2025-12-03.
+2025-12-02 21:30:01,528 - INFO - No new price data to fetch for 003530 from 2025-12-03.
+2025-12-02 21:30:01,628 - INFO - No new price data to fetch for 003535 from 2025-12-03.
+2025-12-02 21:30:01,721 - INFO - No new price data to fetch for 003540 from 2025-12-03.
+2025-12-02 21:30:01,812 - INFO - No new price data to fetch for 003545 from 2025-12-03.
+2025-12-02 21:30:01,903 - INFO - No new price data to fetch for 003547 from 2025-12-03.
+2025-12-02 21:30:01,992 - INFO - No new price data to fetch for 003550 from 2025-12-03.
+2025-12-02 21:30:02,091 - INFO - No new price data to fetch for 003555 from 2025-12-03.
+2025-12-02 21:30:02,180 - INFO - No new price data to fetch for 003560 from 2025-12-03.
+2025-12-02 21:30:02,274 - INFO - No new price data to fetch for 003570 from 2025-12-03.
+2025-12-02 21:30:02,373 - INFO - No new price data to fetch for 003580 from 2025-12-03.
+2025-12-02 21:30:02,476 - INFO - No new price data to fetch for 003610 from 2025-12-03.
+2025-12-02 21:30:02,578 - INFO - No new price data to fetch for 003620 from 2025-12-03.
+2025-12-02 21:30:02,669 - INFO - No new price data to fetch for 003650 from 2025-12-03.
+2025-12-02 21:30:02,773 - INFO - No new price data to fetch for 003670 from 2025-12-03.
+2025-12-02 21:30:02,873 - INFO - No new price data to fetch for 003680 from 2025-12-03.
+2025-12-02 21:30:02,967 - INFO - No new price data to fetch for 003690 from 2025-12-03.
+2025-12-02 21:30:03,069 - INFO - No new price data to fetch for 003720 from 2025-12-03.
+2025-12-02 21:30:03,160 - INFO - No new price data to fetch for 003780 from 2025-12-03.
+2025-12-02 21:30:03,391 - WARNING - '0037T0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:03,414 - INFO - '0037T0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:03,519 - INFO - No new price data to fetch for 003800 from 2025-12-03.
+2025-12-02 21:30:03,622 - INFO - No new price data to fetch for 003830 from 2025-12-03.
+2025-12-02 21:30:03,711 - INFO - No new price data to fetch for 003850 from 2025-12-03.
+2025-12-02 21:30:03,811 - INFO - No new price data to fetch for 003920 from 2025-12-03.
+2025-12-02 21:30:03,920 - INFO - No new price data to fetch for 003925 from 2025-12-03.
+2025-12-02 21:30:04,013 - INFO - No new price data to fetch for 003960 from 2025-12-03.
+2025-12-02 21:30:04,105 - INFO - No new price data to fetch for 004000 from 2025-12-03.
+2025-12-02 21:30:04,198 - INFO - No new price data to fetch for 004020 from 2025-12-03.
+2025-12-02 21:30:04,298 - INFO - No new price data to fetch for 004060 from 2025-12-03.
+2025-12-02 21:30:04,390 - INFO - No new price data to fetch for 004080 from 2025-12-03.
+2025-12-02 21:30:04,487 - INFO - No new price data to fetch for 004090 from 2025-12-03.
+2025-12-02 21:30:04,587 - INFO - No new price data to fetch for 004100 from 2025-12-03.
+2025-12-02 21:30:04,678 - INFO - No new price data to fetch for 004105 from 2025-12-03.
+2025-12-02 21:30:04,777 - INFO - No new price data to fetch for 004140 from 2025-12-03.
+2025-12-02 21:30:04,871 - INFO - No new price data to fetch for 004150 from 2025-12-03.
+2025-12-02 21:30:04,965 - INFO - No new price data to fetch for 004170 from 2025-12-03.
+2025-12-02 21:30:05,272 - WARNING - '0041B0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:05,291 - INFO - '0041B0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:05,538 - WARNING - '0041J0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:05,556 - INFO - '0041J0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:05,859 - WARNING - '0041L0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:05,878 - INFO - '0041L0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:05,967 - INFO - No new price data to fetch for 004250 from 2025-12-03.
+2025-12-02 21:30:06,067 - INFO - No new price data to fetch for 004255 from 2025-12-03.
+2025-12-02 21:30:06,159 - INFO - No new price data to fetch for 004270 from 2025-12-03.
+2025-12-02 21:30:06,264 - INFO - No new price data to fetch for 004310 from 2025-12-03.
+2025-12-02 21:30:06,366 - INFO - No new price data to fetch for 004360 from 2025-12-03.
+2025-12-02 21:30:06,458 - INFO - No new price data to fetch for 004365 from 2025-12-03.
+2025-12-02 21:30:06,561 - INFO - No new price data to fetch for 004370 from 2025-12-03.
+2025-12-02 21:30:06,659 - INFO - No new price data to fetch for 004380 from 2025-12-03.
+2025-12-02 21:30:06,751 - INFO - No new price data to fetch for 004410 from 2025-12-03.
+2025-12-02 21:30:06,846 - INFO - No new price data to fetch for 004415 from 2025-12-03.
+2025-12-02 21:30:06,940 - INFO - No new price data to fetch for 004430 from 2025-12-03.
+2025-12-02 21:30:07,024 - INFO - No new price data to fetch for 004440 from 2025-12-03.
+2025-12-02 21:30:07,128 - INFO - No new price data to fetch for 004450 from 2025-12-03.
+2025-12-02 21:30:07,228 - INFO - No new price data to fetch for 004490 from 2025-12-03.
+2025-12-02 21:30:07,468 - WARNING - '0044K0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:07,491 - INFO - '0044K0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:07,587 - INFO - No new price data to fetch for 004540 from 2025-12-03.
+2025-12-02 21:30:07,677 - INFO - No new price data to fetch for 004545 from 2025-12-03.
+2025-12-02 21:30:07,778 - INFO - No new price data to fetch for 004560 from 2025-12-03.
+2025-12-02 21:30:07,865 - INFO - No new price data to fetch for 004590 from 2025-12-03.
+2025-12-02 21:30:07,957 - INFO - No new price data to fetch for 004650 from 2025-12-03.
+2025-12-02 21:30:08,052 - INFO - No new price data to fetch for 004690 from 2025-12-03.
+2025-12-02 21:30:08,151 - INFO - No new price data to fetch for 004700 from 2025-12-03.
+2025-12-02 21:30:08,244 - INFO - No new price data to fetch for 004710 from 2025-12-03.
+2025-12-02 21:30:08,337 - INFO - No new price data to fetch for 004720 from 2025-12-03.
+2025-12-02 21:30:08,431 - INFO - No new price data to fetch for 004770 from 2025-12-03.
+2025-12-02 21:30:08,531 - INFO - No new price data to fetch for 004780 from 2025-12-03.
+2025-12-02 21:30:08,632 - INFO - No new price data to fetch for 004800 from 2025-12-03.
+2025-12-02 21:30:08,732 - INFO - No new price data to fetch for 004830 from 2025-12-03.
+2025-12-02 21:30:08,829 - INFO - No new price data to fetch for 004835 from 2025-12-03.
+2025-12-02 21:30:08,928 - INFO - No new price data to fetch for 004840 from 2025-12-03.
+2025-12-02 21:30:09,029 - INFO - No new price data to fetch for 004870 from 2025-12-03.
+2025-12-02 21:30:09,126 - INFO - No new price data to fetch for 004890 from 2025-12-03.
+2025-12-02 21:30:09,234 - INFO - No new price data to fetch for 004910 from 2025-12-03.
+2025-12-02 21:30:09,323 - INFO - No new price data to fetch for 004920 from 2025-12-03.
+2025-12-02 21:30:09,415 - INFO - No new price data to fetch for 004960 from 2025-12-03.
+2025-12-02 21:30:09,508 - INFO - No new price data to fetch for 004970 from 2025-12-03.
+2025-12-02 21:30:09,607 - INFO - No new price data to fetch for 004980 from 2025-12-03.
+2025-12-02 21:30:09,706 - INFO - No new price data to fetch for 004985 from 2025-12-03.
+2025-12-02 21:30:09,799 - INFO - No new price data to fetch for 004990 from 2025-12-03.
+2025-12-02 21:30:09,889 - INFO - No new price data to fetch for 00499K from 2025-12-03.
+2025-12-02 21:30:09,993 - INFO - No new price data to fetch for 005010 from 2025-12-03.
+2025-12-02 21:30:10,082 - INFO - No new price data to fetch for 005030 from 2025-12-03.
+2025-12-02 21:30:10,186 - INFO - No new price data to fetch for 005070 from 2025-12-03.
+2025-12-02 21:30:10,281 - INFO - No new price data to fetch for 005090 from 2025-12-03.
+2025-12-02 21:30:10,370 - INFO - No new price data to fetch for 005110 from 2025-12-03.
+2025-12-02 21:30:10,470 - INFO - No new price data to fetch for 005160 from 2025-12-03.
+2025-12-02 21:30:10,570 - INFO - No new price data to fetch for 005180 from 2025-12-03.
+2025-12-02 21:30:10,676 - INFO - No new price data to fetch for 005250 from 2025-12-03.
+2025-12-02 21:30:10,773 - INFO - No new price data to fetch for 005257 from 2025-12-03.
+2025-12-02 21:30:10,882 - INFO - No new price data to fetch for 005290 from 2025-12-03.
+2025-12-02 21:30:10,984 - INFO - No new price data to fetch for 005300 from 2025-12-03.
+2025-12-02 21:30:11,076 - INFO - No new price data to fetch for 005305 from 2025-12-03.
+2025-12-02 21:30:11,172 - INFO - No new price data to fetch for 005320 from 2025-12-03.
+2025-12-02 21:30:11,265 - INFO - No new price data to fetch for 005360 from 2025-12-03.
+2025-12-02 21:30:11,361 - INFO - No new price data to fetch for 005380 from 2025-12-03.
+2025-12-02 21:30:11,452 - INFO - No new price data to fetch for 005385 from 2025-12-03.
+2025-12-02 21:30:11,547 - INFO - No new price data to fetch for 005387 from 2025-12-03.
+2025-12-02 21:30:11,651 - INFO - No new price data to fetch for 005389 from 2025-12-03.
+2025-12-02 21:30:11,757 - INFO - No new price data to fetch for 005420 from 2025-12-03.
+2025-12-02 21:30:11,862 - INFO - No new price data to fetch for 005430 from 2025-12-03.
+2025-12-02 21:30:11,975 - INFO - No new price data to fetch for 005440 from 2025-12-03.
+2025-12-02 21:30:12,069 - INFO - No new price data to fetch for 005490 from 2025-12-03.
+2025-12-02 21:30:12,165 - INFO - No new price data to fetch for 005500 from 2025-12-03.
+2025-12-02 21:30:12,268 - INFO - No new price data to fetch for 005610 from 2025-12-03.
+2025-12-02 21:30:12,383 - INFO - No new price data to fetch for 005670 from 2025-12-03.
+2025-12-02 21:30:12,482 - INFO - No new price data to fetch for 005680 from 2025-12-03.
+2025-12-02 21:30:12,567 - INFO - No new price data to fetch for 005690 from 2025-12-03.
+2025-12-02 21:30:12,669 - INFO - No new price data to fetch for 005710 from 2025-12-03.
+2025-12-02 21:30:12,757 - INFO - No new price data to fetch for 005720 from 2025-12-03.
+2025-12-02 21:30:12,860 - INFO - No new price data to fetch for 005725 from 2025-12-03.
+2025-12-02 21:30:12,951 - INFO - No new price data to fetch for 005740 from 2025-12-03.
+2025-12-02 21:30:13,042 - INFO - No new price data to fetch for 005745 from 2025-12-03.
+2025-12-02 21:30:13,131 - INFO - No new price data to fetch for 005750 from 2025-12-03.
+2025-12-02 21:30:13,234 - INFO - No new price data to fetch for 005800 from 2025-12-03.
+2025-12-02 21:30:13,331 - INFO - No new price data to fetch for 005810 from 2025-12-03.
+2025-12-02 21:30:13,420 - INFO - No new price data to fetch for 005820 from 2025-12-03.
+2025-12-02 21:30:13,523 - INFO - No new price data to fetch for 005830 from 2025-12-03.
+2025-12-02 21:30:13,621 - INFO - No new price data to fetch for 005850 from 2025-12-03.
+2025-12-02 21:30:13,716 - INFO - No new price data to fetch for 005860 from 2025-12-03.
+2025-12-02 21:30:13,811 - INFO - No new price data to fetch for 005870 from 2025-12-03.
+2025-12-02 21:30:13,917 - INFO - No new price data to fetch for 005880 from 2025-12-03.
+2025-12-02 21:30:14,012 - INFO - No new price data to fetch for 005930 from 2025-12-03.
+2025-12-02 21:30:14,106 - INFO - No new price data to fetch for 005935 from 2025-12-03.
+2025-12-02 21:30:14,204 - INFO - No new price data to fetch for 005940 from 2025-12-03.
+2025-12-02 21:30:14,298 - INFO - No new price data to fetch for 005945 from 2025-12-03.
+2025-12-02 21:30:14,393 - INFO - No new price data to fetch for 005950 from 2025-12-03.
+2025-12-02 21:30:14,486 - INFO - No new price data to fetch for 005960 from 2025-12-03.
+2025-12-02 21:30:14,581 - INFO - No new price data to fetch for 005965 from 2025-12-03.
+2025-12-02 21:30:14,676 - INFO - No new price data to fetch for 005990 from 2025-12-03.
+2025-12-02 21:30:14,781 - INFO - No new price data to fetch for 006040 from 2025-12-03.
+2025-12-02 21:30:14,880 - INFO - No new price data to fetch for 006050 from 2025-12-03.
+2025-12-02 21:30:14,980 - INFO - No new price data to fetch for 006060 from 2025-12-03.
+2025-12-02 21:30:15,075 - INFO - No new price data to fetch for 006090 from 2025-12-03.
+2025-12-02 21:30:15,178 - INFO - No new price data to fetch for 006110 from 2025-12-03.
+2025-12-02 21:30:15,283 - INFO - No new price data to fetch for 006120 from 2025-12-03.
+2025-12-02 21:30:15,376 - INFO - No new price data to fetch for 006125 from 2025-12-03.
+2025-12-02 21:30:15,472 - INFO - No new price data to fetch for 006140 from 2025-12-03.
+2025-12-02 21:30:15,562 - INFO - No new price data to fetch for 006200 from 2025-12-03.
+2025-12-02 21:30:15,667 - INFO - No new price data to fetch for 006220 from 2025-12-03.
+2025-12-02 21:30:15,765 - INFO - No new price data to fetch for 006260 from 2025-12-03.
+2025-12-02 21:30:15,877 - INFO - No new price data to fetch for 006280 from 2025-12-03.
+2025-12-02 21:30:15,976 - INFO - No new price data to fetch for 006340 from 2025-12-03.
+2025-12-02 21:30:16,080 - INFO - No new price data to fetch for 006345 from 2025-12-03.
+2025-12-02 21:30:16,174 - INFO - No new price data to fetch for 006360 from 2025-12-03.
+2025-12-02 21:30:16,274 - INFO - No new price data to fetch for 006370 from 2025-12-03.
+2025-12-02 21:30:16,368 - INFO - No new price data to fetch for 006380 from 2025-12-03.
+2025-12-02 21:30:16,465 - INFO - No new price data to fetch for 006400 from 2025-12-03.
+2025-12-02 21:30:16,558 - INFO - No new price data to fetch for 006405 from 2025-12-03.
+2025-12-02 21:30:16,654 - INFO - No new price data to fetch for 006490 from 2025-12-03.
+2025-12-02 21:30:16,743 - INFO - No new price data to fetch for 006570 from 2025-12-03.
+2025-12-02 21:30:16,830 - INFO - No new price data to fetch for 006620 from 2025-12-03.
+2025-12-02 21:30:16,934 - INFO - No new price data to fetch for 006650 from 2025-12-03.
+2025-12-02 21:30:17,027 - INFO - No new price data to fetch for 006660 from 2025-12-03.
+2025-12-02 21:30:17,121 - INFO - No new price data to fetch for 006730 from 2025-12-03.
+2025-12-02 21:30:17,211 - INFO - No new price data to fetch for 006740 from 2025-12-03.
+2025-12-02 21:30:17,304 - INFO - No new price data to fetch for 006800 from 2025-12-03.
+2025-12-02 21:30:17,394 - INFO - No new price data to fetch for 006805 from 2025-12-03.
+2025-12-02 21:30:17,475 - INFO - No new price data to fetch for 00680K from 2025-12-03.
+2025-12-02 21:30:17,568 - INFO - No new price data to fetch for 006840 from 2025-12-03.
+2025-12-02 21:30:17,670 - INFO - No new price data to fetch for 006880 from 2025-12-03.
+2025-12-02 21:30:17,764 - INFO - No new price data to fetch for 006890 from 2025-12-03.
+2025-12-02 21:30:18,093 - WARNING - '0068Y0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:18,116 - INFO - '0068Y0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:18,205 - INFO - No new price data to fetch for 006910 from 2025-12-03.
+2025-12-02 21:30:18,297 - INFO - No new price data to fetch for 006920 from 2025-12-03.
+2025-12-02 21:30:18,386 - INFO - No new price data to fetch for 006980 from 2025-12-03.
+2025-12-02 21:30:18,482 - INFO - No new price data to fetch for 007070 from 2025-12-03.
+2025-12-02 21:30:18,579 - INFO - No new price data to fetch for 007110 from 2025-12-03.
+2025-12-02 21:30:18,668 - INFO - No new price data to fetch for 007120 from 2025-12-03.
+2025-12-02 21:30:18,763 - INFO - No new price data to fetch for 007160 from 2025-12-03.
+2025-12-02 21:30:19,012 - WARNING - '0071M0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:19,035 - INFO - '0071M0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:19,142 - INFO - No new price data to fetch for 007210 from 2025-12-03.
+2025-12-02 21:30:19,242 - INFO - No new price data to fetch for 007280 from 2025-12-03.
+2025-12-02 21:30:19,572 - WARNING - '0072Z0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:19,595 - INFO - '0072Z0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:19,701 - INFO - No new price data to fetch for 007310 from 2025-12-03.
+2025-12-02 21:30:19,788 - INFO - No new price data to fetch for 007330 from 2025-12-03.
+2025-12-02 21:30:19,886 - INFO - No new price data to fetch for 007340 from 2025-12-03.
+2025-12-02 21:30:19,997 - INFO - No new price data to fetch for 007370 from 2025-12-03.
+2025-12-02 21:30:20,088 - INFO - No new price data to fetch for 007390 from 2025-12-03.
+2025-12-02 21:30:20,184 - INFO - No new price data to fetch for 007460 from 2025-12-03.
+2025-12-02 21:30:20,274 - INFO - No new price data to fetch for 007530 from 2025-12-03.
+2025-12-02 21:30:20,375 - INFO - No new price data to fetch for 007540 from 2025-12-03.
+2025-12-02 21:30:20,476 - INFO - No new price data to fetch for 007570 from 2025-12-03.
+2025-12-02 21:30:20,580 - INFO - No new price data to fetch for 007575 from 2025-12-03.
+2025-12-02 21:30:20,680 - INFO - No new price data to fetch for 007590 from 2025-12-03.
+2025-12-02 21:30:20,766 - INFO - No new price data to fetch for 007610 from 2025-12-03.
+2025-12-02 21:30:20,859 - INFO - No new price data to fetch for 007660 from 2025-12-03.
+2025-12-02 21:30:20,938 - INFO - No new price data to fetch for 007680 from 2025-12-03.
+2025-12-02 21:30:21,033 - INFO - No new price data to fetch for 007690 from 2025-12-03.
+2025-12-02 21:30:21,124 - INFO - No new price data to fetch for 007700 from 2025-12-03.
+2025-12-02 21:30:21,218 - INFO - No new price data to fetch for 007720 from 2025-12-03.
+2025-12-02 21:30:21,319 - INFO - No new price data to fetch for 007770 from 2025-12-03.
+2025-12-02 21:30:21,426 - INFO - No new price data to fetch for 007810 from 2025-12-03.
+2025-12-02 21:30:21,519 - INFO - No new price data to fetch for 007815 from 2025-12-03.
+2025-12-02 21:30:21,609 - INFO - No new price data to fetch for 00781K from 2025-12-03.
+2025-12-02 21:30:21,705 - INFO - No new price data to fetch for 007820 from 2025-12-03.
+2025-12-02 21:30:21,801 - INFO - No new price data to fetch for 007860 from 2025-12-03.
+2025-12-02 21:30:21,894 - INFO - No new price data to fetch for 007980 from 2025-12-03.
+2025-12-02 21:30:21,996 - INFO - No new price data to fetch for 008040 from 2025-12-03.
+2025-12-02 21:30:22,096 - INFO - No new price data to fetch for 008060 from 2025-12-03.
+2025-12-02 21:30:22,168 - INFO - No new price data to fetch for 00806K from 2025-12-03.
+2025-12-02 21:30:22,260 - INFO - No new price data to fetch for 008110 from 2025-12-03.
+2025-12-02 21:30:22,360 - INFO - No new price data to fetch for 008250 from 2025-12-03.
+2025-12-02 21:30:22,449 - INFO - No new price data to fetch for 008260 from 2025-12-03.
+2025-12-02 21:30:22,537 - INFO - No new price data to fetch for 008290 from 2025-12-03.
+2025-12-02 21:30:22,630 - INFO - No new price data to fetch for 008350 from 2025-12-03.
+2025-12-02 21:30:22,726 - INFO - No new price data to fetch for 008355 from 2025-12-03.
+2025-12-02 21:30:22,817 - INFO - No new price data to fetch for 008370 from 2025-12-03.
+2025-12-02 21:30:22,908 - INFO - No new price data to fetch for 008420 from 2025-12-03.
+2025-12-02 21:30:23,008 - INFO - No new price data to fetch for 008470 from 2025-12-03.
+2025-12-02 21:30:23,099 - INFO - No new price data to fetch for 008490 from 2025-12-03.
+2025-12-02 21:30:23,195 - INFO - No new price data to fetch for 008500 from 2025-12-03.
+2025-12-02 21:30:23,291 - INFO - No new price data to fetch for 008600 from 2025-12-03.
+2025-12-02 21:30:23,388 - INFO - No new price data to fetch for 008700 from 2025-12-03.
+2025-12-02 21:30:23,480 - INFO - No new price data to fetch for 008730 from 2025-12-03.
+2025-12-02 21:30:23,577 - INFO - No new price data to fetch for 008770 from 2025-12-03.
+2025-12-02 21:30:23,684 - INFO - No new price data to fetch for 008775 from 2025-12-03.
+2025-12-02 21:30:23,778 - INFO - No new price data to fetch for 008830 from 2025-12-03.
+2025-12-02 21:30:23,879 - INFO - No new price data to fetch for 008870 from 2025-12-03.
+2025-12-02 21:30:23,986 - INFO - No new price data to fetch for 008930 from 2025-12-03.
+2025-12-02 21:30:24,089 - INFO - No new price data to fetch for 008970 from 2025-12-03.
+2025-12-02 21:30:24,182 - INFO - No new price data to fetch for 009070 from 2025-12-03.
+2025-12-02 21:30:24,282 - INFO - No new price data to fetch for 009140 from 2025-12-03.
+2025-12-02 21:30:24,383 - INFO - No new price data to fetch for 009150 from 2025-12-03.
+2025-12-02 21:30:24,481 - INFO - No new price data to fetch for 009155 from 2025-12-03.
+2025-12-02 21:30:24,582 - INFO - No new price data to fetch for 009160 from 2025-12-03.
+2025-12-02 21:30:24,680 - INFO - No new price data to fetch for 009180 from 2025-12-03.
+2025-12-02 21:30:24,772 - INFO - No new price data to fetch for 009190 from 2025-12-03.
+2025-12-02 21:30:25,078 - WARNING - '0091W0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:25,101 - INFO - '0091W0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:25,200 - INFO - No new price data to fetch for 009200 from 2025-12-03.
+2025-12-02 21:30:25,304 - INFO - No new price data to fetch for 009240 from 2025-12-03.
+2025-12-02 21:30:25,407 - INFO - No new price data to fetch for 009270 from 2025-12-03.
+2025-12-02 21:30:25,513 - INFO - No new price data to fetch for 009290 from 2025-12-03.
+2025-12-02 21:30:25,615 - INFO - No new price data to fetch for 009300 from 2025-12-03.
+2025-12-02 21:30:25,709 - INFO - No new price data to fetch for 009310 from 2025-12-03.
+2025-12-02 21:30:25,815 - INFO - No new price data to fetch for 009320 from 2025-12-03.
+2025-12-02 21:30:26,073 - WARNING - '0093G0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:26,092 - INFO - '0093G0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:26,191 - INFO - No new price data to fetch for 009410 from 2025-12-03.
+2025-12-02 21:30:26,278 - INFO - No new price data to fetch for 009415 from 2025-12-03.
+2025-12-02 21:30:26,380 - INFO - No new price data to fetch for 009420 from 2025-12-03.
+2025-12-02 21:30:26,476 - INFO - No new price data to fetch for 009440 from 2025-12-03.
+2025-12-02 21:30:26,578 - INFO - No new price data to fetch for 009450 from 2025-12-03.
+2025-12-02 21:30:26,679 - INFO - No new price data to fetch for 009460 from 2025-12-03.
+2025-12-02 21:30:26,770 - INFO - No new price data to fetch for 009470 from 2025-12-03.
+2025-12-02 21:30:26,867 - INFO - No new price data to fetch for 009520 from 2025-12-03.
+2025-12-02 21:30:26,973 - INFO - No new price data to fetch for 009540 from 2025-12-03.
+2025-12-02 21:30:27,069 - INFO - No new price data to fetch for 009580 from 2025-12-03.
+2025-12-02 21:30:27,168 - INFO - No new price data to fetch for 009620 from 2025-12-03.
+2025-12-02 21:30:27,271 - INFO - No new price data to fetch for 009680 from 2025-12-03.
+2025-12-02 21:30:27,504 - WARNING - '0096B0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:27,528 - INFO - '0096B0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:27,789 - WARNING - '0096D0' 종목 데이터를 찾을 수 없어(404 Not Found) DB에서 삭제를 시도합니다.
+2025-12-02 21:30:27,809 - INFO - '0096D0' 종목이 DB에서 성공적으로 삭제되었습니다.
+2025-12-02 21:30:27,900 - INFO - No new price data to fetch for 009730 from 2025-12-03.
+2025-12-02 21:30:27,994 - INFO - No new price data to fetch for 009770 from 2025-12-03.
+2025-12-02 21:30:28,084 - INFO - No new price data to fetch for 009780 from 2025-12-03.
+2025-12-02 21:30:28,178 - INFO - No new price data to fetch for 009810 from 2025-12-03.
+2025-12-02 21:30:28,286 - INFO - No new price data to fetch for 009830 from 2025-12-03.
+2025-12-02 21:30:28,386 - INFO - No new price data to fetch for 009835 from 2025-12-03.
+2025-12-02 21:30:28,463 - INFO - No new price data to fetch for 009900 from 2025-12-03.
+2025-12-02 21:30:28,569 - INFO - No new price data to fetch for 009970 from 2025-12-03.
+2025-12-02 21:30:28,664 - INFO - No new price data to fetch for 010040 from 2025-12-03.
+2025-12-02 21:30:28,760 - INFO - No new price data to fetch for 010060 from 2025-12-03.
+2025-12-02 21:30:28,855 - INFO - No new price data to fetch for 010100 from 2025-12-03.
+2025-12-02 21:30:28,961 - INFO - No new price data to fetch for 010120 from 2025-12-03.
+2025-12-02 21:30:29,068 - INFO - No new price data to fetch for 010130 from 2025-12-03.
+2025-12-02 21:30:29,166 - INFO - No new price data to fetch for 010140 from 2025-12-03.
+2025-12-02 21:30:29,269 - INFO - No new price data to fetch for 010170 from 2025-12-03.
+2025-12-02 21:30:29,360 - INFO - No new price data to fetch for 010240 from 2025-12-03.
+2025-12-02 21:30:29,464 - INFO - No new price data to fetch for 010280 from 2025-12-03.
+2025-12-02 21:30:29,555 - INFO - No new price data to fetch for 010400 from 2025-12-03.
+2025-12-02 21:30:29,652 - INFO - No new price data to fetch for 010470 from 2025-12-03.
+2025-12-02 21:30:29,739 - INFO - No new price data to fetch for 010580 from 2025-12-03.
+2025-12-02 21:30:29,835 - INFO - No new price data to fetch for 010600 from 2025-12-03.
+2025-12-02 21:30:29,926 - INFO - No new price data to fetch for 010620 from 2025-12-03.
+2025-12-02 21:30:30,017 - INFO - No new price data to fetch for 010640 from 2025-12-03.
+2025-12-02 21:30:30,120 - INFO - No new price data to fetch for 010660 from 2025-12-03.
+2025-12-02 21:30:30,216 - INFO - No new price data to fetch for 010690 from 2025-12-03.
+2025-12-02 21:30:30,310 - INFO - No new price data to fetch for 010770 from 2025-12-03.
+2025-12-02 21:30:30,405 - INFO - No new price data to fetch for 010780 from 2025-12-03.
+2025-12-02 21:30:30,503 - INFO - No new price data to fetch for 010820 from 2025-12-03.
+2025-12-02 21:30:30,600 - INFO - No new price data to fetch for 010950 from 2025-12-03.
+2025-12-02 21:30:30,759 - INFO - No new price data to fetch for 010955 from 2025-12-03.
+2025-12-02 21:30:30,852 - INFO - No new price data to fetch for 010960 from 2025-12-03.
+2025-12-02 21:30:30,952 - INFO - No new price data to fetch for 011000 from 2025-12-03.
+2025-12-02 21:30:31,055 - INFO - No new price data to fetch for 011040 from 2025-12-03.
+2025-12-02 21:30:31,159 - INFO - No new price data to fetch for 011070 from 2025-12-03.
+2025-12-02 21:30:31,260 - INFO - No new price data to fetch for 011080 from 2025-12-03.
+2025-12-02 21:30:31,363 - INFO - No new price data to fetch for 011090 from 2025-12-03.
+2025-12-02 21:30:31,466 - INFO - No new price data to fetch for 011150 from 2025-12-03.
+2025-12-02 21:30:31,561 - INFO - No new price data to fetch for 011155 from 2025-12-03.
+2025-12-02 21:30:31,663 - INFO - No new price data to fetch for 011170 from 2025-12-03.
+2025-12-02 21:30:31,766 - INFO - No new price data to fetch for 011200 from 2025-12-03.
+2025-12-02 21:30:31,864 - INFO - No new price data to fetch for 011210 from 2025-12-03.
+2025-12-02 21:30:31,960 - INFO - No new price data to fetch for 011230 from 2025-12-03.
+2025-12-02 21:30:32,062 - INFO - No new price data to fetch for 011280 from 2025-12-03.
+2025-12-02 21:30:32,160 - INFO - No new price data to fetch for 011300 from 2025-12-03.
+2025-12-02 21:30:32,256 - INFO - No new price data to fetch for 011320 from 2025-12-03.
+2025-12-02 21:30:32,354 - INFO - No new price data to fetch for 011330 from 2025-12-03.
+2025-12-02 21:30:32,451 - INFO - No new price data to fetch for 011370 from 2025-12-03.
+2025-12-02 21:30:32,547 - INFO - No new price data to fetch for 011390 from 2025-12-03.
+2025-12-02 21:30:32,547 - INFO - StockPriceManager 스크립트 종료: Tue Dec  2 21:30:32 2025
+2025-12-02 21:30:32,551 - INFO - MySQL connection is closed
+2025-12-02 21:30:32,552 - INFO - 데이터베이스 연결이 종료되었습니다.
+2025-12-02 21:31:13,123 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 21:31:13,123 - INFO - 데이터베이스 연결 성공.
+2025-12-02 21:31:13,123 - INFO - CompanyManager 스크립트 시작: Tue Dec  2 21:31:13 2025
+2025-12-02 21:31:13,137 - INFO - Table 'companies' created or already exists.
+2025-12-02 21:31:13,137 - INFO - 종목 정보 업데이트를 시작합니다.
+2025-12-02 21:31:13,137 - INFO - Fetching company list from KRX...
+2025-12-02 21:31:13,651 - INFO - DB에 존재하는 종목 수: 2869
+2025-12-02 21:31:13,653 - INFO - 총 18개의 새로운 종목을 데이터베이스에 저장합니다.
+2025-12-02 21:31:13,898 - INFO - 성공적으로 18개의 신규 종목 정보를 저장했습니다.
+2025-12-02 21:31:13,900 - INFO - CompanyManager 스크립트 종료: Tue Dec  2 21:31:13 2025
+2025-12-02 21:31:13,903 - INFO - MySQL connection is closed
+2025-12-02 21:31:13,904 - INFO - 데이터베이스 연결이 종료되었습니다.
+2025-12-02 21:32:01,661 - INFO - Connected to MySQL Server version 8.0.44-0ubuntu0.22.04.1
+2025-12-02 21:32:01,661 - INFO - 데이터베이스 연결 성공.
+2025-12-02 21:32:01,661 - INFO - CompanyManager 스크립트 시작: Tue Dec  2 21:32:01 2025
+2025-12-02 21:32:01,671 - INFO - Table 'companies' created or already exists.
+2025-12-02 21:32:01,671 - INFO - 종목 정보 업데이트를 시작합니다.
+2025-12-02 21:32:01,671 - INFO - Fetching company list from KRX...
+2025-12-02 21:32:02,182 - INFO - DB에 존재하는 종목 수: 2887
+2025-12-02 21:32:02,184 - INFO - 새로 추가할 종목이 없습니다.
+2025-12-02 21:32:02,184 - INFO - CompanyManager 스크립트 종료: Tue Dec  2 21:32:02 2025
+2025-12-02 21:32:02,187 - INFO - MySQL connection is closed
+2025-12-02 21:32:02,188 - INFO - 데이터베이스 연결이 종료되었습니다.
