@@ -6,6 +6,7 @@ import datetime
 import FinanceDataReader as fdr
 from dotenv import load_dotenv
 from AppManager import get_db_connection
+from IndicatorManager import IndicatorManager
 
 class StockPriceManager:
     """
@@ -14,7 +15,8 @@ class StockPriceManager:
     def __init__(self, db_access_obj):
         """dbaccess 객체를 인자로 받아 초기화합니다."""
         self.db_access = db_access_obj    
-
+        self.indicator_manager = IndicatorManager(db_access_obj)
+ 
     def create_prices_table(self):
         """'prices' 테이블을 생성합니다. 이미 테이블이 존재하면 생성하지 않습니다."""
         try:
@@ -94,7 +96,7 @@ class StockPriceManager:
                         insert_cursor.executemany(price_query, data_to_insert)
                         self.db_access.connection.commit()
                         logging.info(f"Successfully saved/updated {insert_cursor.rowcount} price records for {stock_code}.")
-                        insert_cursor.close()
+                        insert_cursor.close()                        
 
                 except Exception as e:
                     # 404 오류가 발생하면 해당 종목이 더 이상 유효하지 않은 것으로 간주합니다.
@@ -118,12 +120,36 @@ class StockPriceManager:
         except Exception as e:
             logging.error(f"An unexpected error occurred in save_daily_prices: {e}")
 
+    def update_all_indicators(self, limit=None):
+        """DB에 저장된 모든 회사에 대해 기술적 지표를 계산하고 저장합니다."""
+        try:
+            cursor = self.db_access.connection.cursor(dictionary=True)
+            
+            # DB에서 회사 목록 가져오기
+            company_query = "SELECT id, code FROM companies"
+            if limit:
+                company_query += f" LIMIT {limit}"
+            cursor.execute(company_query)
+            companies_to_update = cursor.fetchall()
+            cursor.close()
+
+            logging.info(f"기술적 지표 계산을 시작합니다. 대상 종목 수: {len(companies_to_update)}")
+
+            for company in companies_to_update:
+                company_id = company['id']
+                stock_code = company['code']
+                logging.info(f"'{stock_code}'({company_id}) 종목의 지표를 계산합니다.")
+                self.indicator_manager.calculate_and_save_indicators(company_id)
+        
+        except Exception as e:
+            logging.error(f"An unexpected error occurred in update_all_indicators: {e}")
+
 if __name__ == "__main__":
     with get_db_connection() as db_access:
         logging.info("StockPriceManager 스크립트 시작: %s", time.ctime())
         
         price_manager = StockPriceManager(db_access)
-        if price_manager.create_prices_table():
+        if price_manager.create_prices_table() and price_manager.indicator_manager.create_indicators_tables():
             logging.info("주식 가격 정보 업데이트를 시작합니다.")
 
             one_year_ago = datetime.date.today() - datetime.timedelta(days=365)
@@ -132,5 +158,9 @@ if __name__ == "__main__":
             stock_count = os.getenv('STOCK_COUNT')
             limit = int(stock_count) if stock_count else None
             price_manager.save_daily_prices(start_date=start_date, limit=limit)
+
+            # 모든 가격 정보 업데이트 후, 전체 종목에 대한 지표 계산 실행
+            logging.info("모든 종목의 기술적 지표 업데이트를 시작합니다.")
+            price_manager.update_all_indicators(limit=limit)
         
         logging.info("StockPriceManager 스크립트 종료: %s", time.ctime())
