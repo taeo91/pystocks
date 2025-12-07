@@ -119,6 +119,83 @@ class Screener:
         except Exception as e:
             logging.error(f"상승 추세 종목 검색 중 오류 발생: {e}")
             return pd.DataFrame()
+            
+    def find_sustained_uptrend_after_cross(self, days_ago=15):
+        """
+        최근 N일 내 MACD/RSI 골든크로스 후, 지속적인 상승추세에 있는 종목을 찾습니다.
+        - 상승추세 조건:
+            1. 현재 종가가 크로스일 종가보다 높음
+            2. 크로스 이후 MACD 히스토그램이 0 이상을 유지
+            3. 현재 5일 이평선 > 20일 이평선 (단기 정배열)
+        """
+        try:
+            start_date = datetime.date.today() - datetime.timedelta(days=days_ago)
+            start_date_str = start_date.strftime('%Y-%m-%d')
+
+            query = """
+            WITH recent_golden_cross AS (
+                -- 1. 지정된 기간 내에 발생한 가장 최근의 MACD 골든크로스와 RSI 매수 신호를 찾음
+                SELECT
+                    m.company_id,
+                    c.code,
+                    c.name,
+                    MAX(m.trade_date) AS cross_date
+                FROM macd m
+                JOIN rsi r ON m.company_id = r.company_id AND m.trade_date = r.trade_date
+                JOIN companies c ON m.company_id = c.id
+                WHERE 
+                    m.trade_date >= %s
+                    AND m.`cross` = 'GOLDEN'
+                    AND r.`signal` = 'BUY'
+                GROUP BY m.company_id, c.code, c.name
+            ),
+            cross_and_after_data AS (
+                -- 2. 골든크로스 발생 종목의 크로스 날짜 이후 데이터를 가져옴
+                SELECT
+                    rgc.company_id,
+                    rgc.code,
+                    rgc.name,
+                    rgc.cross_date,
+                    m.trade_date,
+                    m.macd_hist,
+                    ma.ma_5,
+                    ma.ma_20,
+                    p.close_price,
+                    -- 골든크로스 날짜의 종가를 가져옴
+                    FIRST_VALUE(p.close_price) OVER (PARTITION BY rgc.company_id ORDER BY m.trade_date) as cross_date_price,
+                    -- 골든크로스 이후 macd_hist의 최소값을 가져옴 (0 미만으로 떨어진 적 있는지 확인)
+                    MIN(m.macd_hist) OVER (PARTITION BY rgc.company_id ORDER BY m.trade_date ROWS BETWEEN 1 FOLLOWING AND UNBOUNDED FOLLOWING) as min_hist_after_cross,
+                    -- 최근 데이터인지 확인하기 위한 순위
+                    ROW_NUMBER() OVER (PARTITION BY rgc.company_id ORDER BY m.trade_date DESC) as rn
+                FROM recent_golden_cross rgc
+                JOIN macd m ON rgc.company_id = m.company_id AND m.trade_date >= rgc.cross_date
+                JOIN moving_average ma ON m.company_id = ma.company_id AND m.trade_date = ma.trade_date
+                JOIN prices p ON m.company_id = p.company_id AND m.trade_date = p.trade_date
+            )
+            -- 3. 최종 조건 필터링
+            SELECT
+                code AS '종목코드',
+                name AS '종목명',
+                cross_date AS '골든크로스_발생일',
+                trade_date AS '최근_거래일',
+                cross_date_price AS '크로스일_종가',
+                close_price AS '최근_종가'
+            FROM cross_and_after_data
+            WHERE
+                rn = 1 -- 가장 최근 데이터만 선택
+                AND close_price > cross_date_price -- 최근 종가가 크로스일 종가보다 높음
+                AND min_hist_after_cross >= 0 -- 크로스 이후 macd_hist가 음수가 된 적이 없음
+                AND ma_5 > ma_20 -- 5일 이평선이 20일 이평선보다 높음 (정배열)
+            ORDER BY cross_date DESC;
+            """
+            
+            logging.info(f"최근 {days_ago}일 내 크로스 후 상승추세 종목을 검색합니다.")
+            df = pd.read_sql(query, self.engine, params=(start_date_str,))
+            return df
+
+        except Exception as e:
+            logging.error(f"상승 추세 종목 검색(크로스 후) 중 오류 발생: {e}")
+            return pd.DataFrame()
 
 
 def export_to_excel(dataframe, filename='golden_cross_stocks.xlsx'):
@@ -141,6 +218,6 @@ def export_to_excel(dataframe, filename='golden_cross_stocks.xlsx'):
 if __name__ == "__main__":
     with get_db_connection() as db_access:
         screener = Screener(db_access)
-        # 최근 20일간 상승 추세인 종목 검색
-        uptrend_stocks = screener.find_uptrend_stocks(period=20)
-        export_to_excel(uptrend_stocks, filename='uptrend_stocks_20d.xlsx')
+        # 최근 15일 내 골든크로스 후, 지속 상승 추세인 종목 검색
+        sustained_uptrend_stocks = screener.find_sustained_uptrend_after_cross(days_ago=15)
+        export_to_excel(sustained_uptrend_stocks, filename='sustained_uptrend_stocks.xlsx')
