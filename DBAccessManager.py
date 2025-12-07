@@ -40,10 +40,31 @@ class dbaccess:
         try:
             cursor.execute(query, params)
             self.connection.commit()
+            return cursor
+        except Error as e:
+            logging.error(f"Query execution failed: {e}")
+            return None
+        finally:
+            cursor.close()
+
+    def execute_many_query(self, query, params_list):
+        """ executemany를 사용하여 여러 데이터를 한번에 추가 """
+        if not self.connection or not self.connection.is_connected():
+            logging.error("데이터베이스에 연결되어 있지 않습니다.")
+            return None
+        
+        cursor = self.connection.cursor()
+        try:
+            cursor.executemany(query, params_list)
+            self.connection.commit()
+            logging.info(f"{cursor.rowcount} records were inserted.")
+            return cursor
+        except Error as e:
+            logging.error(f"Execute many query failed: {e}")
+            return None
         finally:
             cursor.close()
 
     def close_connection(self):
         if self.connection and self.connection.is_connected():
             self.connection.close()
-            logging.info("MySQL connection is closed")

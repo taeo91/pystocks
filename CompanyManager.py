@@ -1,3 +1,4 @@
+# Please paste the content of CompanyManager.py here
 import os
 import sys
 import logging
@@ -70,57 +71,73 @@ class CompanyManager:
             
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Financial Highlight 테이블 찾기
-            highlight_table = soup.select_one('#highlight_D_Y')
-            if not highlight_table:
-                # 우선주가 보통주 페이지로 리다이렉트 되었지만 테이블이 없는 경우, 보통주로 재시도
-                if code.endswith('5') and not is_retry: # '5'로 끝나는 우선주
-                    logging.warning(f"FnGuide에서 '{code}'(우선주)의 테이블을 찾을 수 없어 보통주로 재시도합니다.")
-                    common_stock_code = code[:-1] + '0'
-                    return self.get_financial_data_from_fnguide(common_stock_code, is_retry=True)
-
-                logging.warning(f"FnGuide에서 '{code}' 종목의 Financial Highlight 테이블을 찾을 수 없습니다.")
-                return {}
-
             data = {}
-            # 테이블의 각 행(tr)을 순회하며 데이터 추출
-            rows = highlight_table.select('tbody tr')
-            for row in rows:
-                th = row.select_one('th.clf')
-                # '최근결산'에 해당하는 첫 번째 td 값만 가져옴
-                tds = row.select('td')
-                
-                if not th or not tds:
-                    continue
 
-                item = th.text.strip()
-                
-                # ROE, EPS, PBR은 6번째 td의 값을, 나머지는 마지막 td의 값을 사용
-                target_td_index = -1 # 기본값: 마지막 td
-                if item in ('ROE', 'EPS', 'PBR'):
-                    if len(tds) > 5: # 6번째 td가 존재하는지 확인
-                        target_td_index = 5
-                
-                if target_td_index == -1 and not tds: continue # td가 없으면 건너뛰기
+            # --- 상단 요약 정보 스크레이핑 ---
+            summary_mapping = [
+                ('div.corp_group2 > dl:nth-of-type(1) > dd', 'PER'),
+                ('div.corp_group2 > dl:nth-of-type(4) > dd', 'PBR'),
+                ('div.corp_group2 > dl:nth-of-type(5) > dd', 'DivRate') # 배당수익률
+            ]
+            for selector, key in summary_mapping:
+                self._extract_numeric_value(soup, selector, data, key)
 
-                value_str = tds[target_td_index].text.strip().replace(',', '')
+            # --- Financial Highlight 테이블에서 나머지 정보 스크레이핑 ---
+            highlight_table = soup.select_one('#highlight_D_Y')
+            if highlight_table:
+                # Mapping for table data
+                table_mapping = {
+                    'EPS': {'row_name': 'EPS', 'col_index': 5},
+                    'ROE': {'row_name': 'ROE', 'col_index': 5},
+                    'BPS': {'row_name': 'BPS', 'col_index': -1}, # last column
+                }
                 
-                if not value_str or value_str == '-' or value_str == 'N/A':
-                    value = None
-                else:
-                    value = float(value_str)
-
-                if 'PER' in item and 'EPS' not in item: data['PER'] = value
-                elif 'PBR' in item: data['PBR'] = value
-                elif 'EPS' in item: data['EPS'] = value
-                elif 'ROE' in item: data['ROE'] = value
-                elif 'BPS' in item: data['BPS'] = value
-                elif '배당수익률' in item: data['DivRate'] = value
+                rows = highlight_table.select('tbody tr')
+                for row in rows:
+                    th = row.select_one('th.clf')
+                    if not th: continue
+                    
+                    item_name = th.text.strip()
+                    
+                    for key, mapping_info in table_mapping.items():
+                        # 정확한 문자열 일치를 확인하여 'BPS'에서 'EPS'가 일치하는 것을 방지
+                        if item_name == mapping_info['row_name']:
+                            tds = row.select('td')
+                            # 필요한 td 셀이 존재하는지 확인
+                            if len(tds) > abs(mapping_info['col_index']):
+                                value_str = tds[mapping_info['col_index']].text.strip().replace(',', '')
+                                if value_str and value_str not in ('-', 'N/A'):
+                                    data[key] = float(value_str)
+                                else:
+                                    # 값이 없더라도 키는 존재하도록 보장
+                                    if key not in data: data[key] = None
+                            break # 일치하는 항목을 찾았으므로 다음 행으로 이동
+            else:
+                logging.warning(f"FnGuide에서 '{code}' 종목의 Financial Highlight 테이블을 찾을 수 없습니다.")
 
             return data
+
         except Exception as e:
             logging.warning(f"FnGuide에서 '{code}' 종목의 재무 정보 스크레이핑 실패: {e}")
             return {}
+
+    def _extract_numeric_value(self, soup, selector, data_dict, key):
+        """CSS 선택자를 사용하여 HTML 요소에서 숫자 값을 추출하는 헬퍼 함수"""
+        try:
+            element = soup.select_one(selector)
+            if element:
+                text = element.text.strip()
+                if text and text not in ('N/A', '-'):
+                    # 쉼표 및 퍼센트 기호 제거
+                    cleaned_text = text.replace(',', '').replace('%', '')
+                    data_dict[key] = float(cleaned_text)
+                else:
+                    data_dict[key] = None
+            else:
+                data_dict[key] = None
+        except (ValueError, TypeError) as e:
+            logging.warning(f"'{selector}' 선택자를 사용하여 '{key}'에 대한 값을 구문 분석할 수 없습니다: {e}")
+            data_dict[key] = None
 
     def save_companies_from_fdr(self, limit=None):
         """FinanceDataReader를 사용하여 KRX 전체 종목 정보를 가져와 DB에 저장하는 메서드"""
@@ -179,72 +196,50 @@ class CompanyManager:
                     break
             
             # --- 필터링된 종목들로 DB 작업 준비 ---
-            new_stocks_to_insert = []
-            updates_to_execute = []
-
+            stocks_to_upsert = []
             logging.info(f"총 {len(qualified_rows)}개의 조건 만족 종목으로 DB 작업을 시작합니다.")
 
             for row in qualified_rows:
-                code = row.get('Code')
-                # DB에서 가져온 기존 종목 목록에 현재 코드가 있는지 확인
-                db_stock = existing_stocks.get(code)
+                # FDR 데이터와 fnguide 스크래핑 데이터 병합
+                # fnguide 데이터가 있으면 해당 값으로 업데이트
+                fnguide_financials = self.get_financial_data_from_fnguide(row.get('Code'))
+                if fnguide_financials:
+                    for key, fnguide_val in fnguide_financials.items():
+                        if fnguide_val is not None:
+                            row[key] = fnguide_val
+                
+                # DB에 저장할 파라미터 튜플 생성
+                params = (
+                    row.get('Code'), row.get('Name'), row.get('Market'),
+                    row.get('Marcap'), row.get('Stocks'), row.get('PBR'),
+                    row.get('PER'), row.get('EPS'), row.get('ROE'),
+                    row.get('DivRate'), row.get('BPS')
+                )
+                stocks_to_upsert.append(params)
 
-                if not db_stock: # 신규 종목일 경우
-                    params = tuple(row.get(df_col) for df_col in ['Code'] + list(field_map.keys()))
-                    new_stocks_to_insert.append(params)
-                else: # 기존 종목일 경우, 변경된 값 확인
-                    update_fields = []
-                    update_values = []
-
-                    for df_col, db_col in field_map.items():
-                        fdr_val = row.get(df_col)
-                        db_val = db_stock.get(db_col)
-
-                        # pandas의 NaN/NaT는 None으로 처리
-                        if pd.isna(fdr_val):
-                            fdr_val = None
-                        
-                        # DB의 Decimal 타입을 float으로 변환하여 비교
-                        if isinstance(db_val, Decimal):
-                            db_val = float(db_val)
-
-                        # 값이 다른 경우 업데이트 목록에 추가
-                        if fdr_val != db_val:
-                            update_fields.append(f"{db_col} = %s")
-                            update_values.append(fdr_val)
-                    
-                    if update_fields:
-                        update_values.append(code) # WHERE 절에 들어갈 종목 코드
-                        updates_to_execute.append({
-                            "fields": ", ".join(update_fields),
-                            "values": tuple(update_values)
-                        })
-
-            if new_stocks_to_insert:
-                logging.info(f"총 {len(new_stocks_to_insert)}개의 새로운 종목을 데이터베이스에 저장합니다.")
+            if stocks_to_upsert:
+                logging.info(f"총 {len(stocks_to_upsert)}개 종목을 데이터베이스에 저장 또는 업데이트합니다.")
+                
+                # INSERT ... ON DUPLICATE KEY UPDATE 쿼리
                 query = """
                 INSERT INTO companies (code, name, market, marcap, stocks, pbr, per, eps, roe, div_yield, bps) 
-                VALUES ({})
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    name = VALUES(name),
+                    market = VALUES(market),
+                    marcap = VALUES(marcap),
+                    stocks = VALUES(stocks),
+                    pbr = VALUES(pbr),
+                    per = VALUES(per),
+                    eps = VALUES(eps),
+                    roe = VALUES(roe),
+                    div_yield = VALUES(div_yield),
+                    bps = VALUES(bps);
                 """
-                placeholders = ", ".join(["%s"] * 11)
-                insert_query = query.format(placeholders)
-                
-                # executemany를 사용하도록 DBAccessManager 수정 또는 반복 실행
-                # 현재 DBAccessManager는 executemany를 지원하지 않으므로 반복 실행
-                for params in new_stocks_to_insert: 
-                    self.db_access.execute_query(insert_query, params)
-                logging.info(f"성공적으로 {len(new_stocks_to_insert)}개의 신규 종목 정보를 저장했습니다.")
+                self.db_access.execute_many_query(query, stocks_to_upsert)
+                logging.info(f"성공적으로 {len(stocks_to_upsert)}개 종목 정보를 저장/업데이트했습니다.")
             else:
-                logging.info("새로 추가할 종목이 없습니다.")
-
-            if updates_to_execute:
-                logging.info(f"총 {len(updates_to_execute)}개 종목의 정보를 업데이트합니다.")
-                for update in updates_to_execute:
-                    query = f"UPDATE companies SET {update['fields']} WHERE code = %s"
-                    self.db_access.execute_query(query, update['values'])
-                logging.info("성공적으로 종목 정보를 업데이트했습니다.")
-            else:
-                logging.info("업데이트할 종목 정보가 없습니다.")
+                logging.info("저장하거나 업데이트할 종목이 없습니다.")
 
         except Exception as e:
             logging.error(f"Error saving companies from fdr: {e}")
