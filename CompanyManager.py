@@ -52,10 +52,14 @@ class CompanyManager:
     def get_financial_data_from_fnguide(self, code, is_retry=False):
         """FnGuide에서 개별 종목의 재무 정보를 스크레이핑하는 메서드"""
         try:
-            # FnGuide는 종목코드 앞에 'A'를 붙여야 합니다.
-            url = f"http://comp.fnguide.com/SVO2/ASP/SVD_Main.asp?pGB=1&gicode=A{code}"
+            # fnguide page url prefix, postfix
+            url_head = "https://comp.fnguide.com/SVO2/ASP/SVD_Main.asp?pGB=1&gicode=A"
+            url_tail = "&cID=&MenuYn=Y&ReportGB=&NewMenuID=101&stkGb=701"
+            url = f"{url_head}{code}{url_tail}"
+
             headers = {'User-Agent': 'Mozilla/5.0'}
             response = requests.get(url, headers=headers, timeout=5)
+            
             # 일부 우선주 종목은 페이지가 없을 수 있음. 이 경우 보통주로 재시도.
             if "Snapshot 일부 종목에 한해" in response.text and not is_retry:
                 logging.warning(f"FnGuide에서 '{code}'(우선주) 페이지를 찾을 수 없어 보통주로 재시도합니다.")
