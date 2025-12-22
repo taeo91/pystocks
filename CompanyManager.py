@@ -34,7 +34,8 @@ class CompanyManager:
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 code VARCHAR(20) NOT NULL UNIQUE COMMENT '종목코드',
                 name VARCHAR(255) NOT NULL COMMENT '종목명',
-                market VARCHAR(50) COMMENT '시장'
+                market VARCHAR(50) COMMENT '시장',
+                url VARCHAR(255) COMMENT 'FnGuide URL'
             ) COMMENT '종목 기본 정보';
             """
             self.db_access.execute_query(query)
@@ -61,6 +62,14 @@ class CompanyManager:
                 roe DECIMAL(10, 2) COMMENT 'ROE',
                 div_yield DECIMAL(10, 2) COMMENT '배당수익률(%)',
                 bps DECIMAL(15, 2) COMMENT '주당순자산가치',
+                per_pred DECIMAL(10, 2) COMMENT 'PER(예상)',
+                pbr_pred DECIMAL(10, 2) COMMENT 'PBR(예상)',
+                eps_pred DECIMAL(15, 2) COMMENT 'EPS(예상)',
+                roe_pred DECIMAL(10, 2) COMMENT 'ROE(예상)',
+                bps_pred DECIMAL(15, 2) COMMENT 'BPS(예상)',
+                perf_yoy VARCHAR(50) COMMENT '실적이슈(전년동기대비)',
+                perf_vs_3m_ago VARCHAR(50) COMMENT '실적이슈(3개월전대비)',
+                perf_vs_consensus VARCHAR(50) COMMENT '실적이슈(예상실적대비)',
                 FOREIGN KEY (code) REFERENCES companies (code) ON DELETE CASCADE,
                 UNIQUE KEY (code, date)
             ) COMMENT '일일 재무 정보';
@@ -117,58 +126,39 @@ class CompanyManager:
                     
                     df = df_list[0]
                     df = df.set_index(df.columns[0])
-                    columns = df.columns
 
-                    # 사용자 요청: highlight_D_Y 테이블의 6번째 데이터 컬럼 값을 사용합니다.
-                    # pandas DataFrame에서는 0부터 시작하므로 인덱스는 5가 됩니다.
-                    target_col_index = 5
-
-                    # 사용할 컬럼이 데이터프레임의 실제 컬럼 수보다 작은지 확인합니다.
-                    if len(df.columns) <= target_col_index:
-                        logging.warning(f"FnGuide '{code}': Financial Highlight 테이블에 6번째 데이터 컬럼이 존재하지 않습니다.")
-                        # 컬럼이 없으면, 아래 로직에서 처리되지 않도록 -1로 설정합니다.
-                        target_col_index = -1
+                    current_year_col_index = 5
+                    next_year_col_index = 6
 
                     table_mapping = {
-                        'EPS': {'row_name': 'EPS', 'col_index': target_col_index},
-                        'BPS': {'row_name': 'BPS', 'col_index': target_col_index},
-                        'ROE': {'row_name': 'ROE', 'col_index': target_col_index},
+                        'PER': {'row_name': 'PER'},
+                        'PBR': {'row_name': 'PBR'},
+                        'EPS': {'row_name': 'EPS'},
+                        'BPS': {'row_name': 'BPS'},
+                        'ROE': {'row_name': 'ROE'},
                     }
-
+                    
                     for key, mapping in table_mapping.items():
-                        base_row_name = mapping['row_name']
-                        col_index = mapping['col_index']
+                        # 현재 값 추출
+                        self._extract_from_table(df, data, key, mapping['row_name'], current_year_col_index, code)
+                        # 예측 값 추출
+                        self._extract_from_table(df, data, f"{key}_pred", mapping['row_name'], next_year_col_index, code)
 
-                        if col_index == -1:
-                            continue
-
-                        # 'EPS'가 포함된 행(예: 'EPS(원)')을 찾습니다.
-                        try:
-                            target_row_name = next(ix for ix in df.index if base_row_name in ix)
-                        except StopIteration:
-                            logging.warning(f"FnGuide '{code}': Financial Highlight 테이블에서 '{base_row_name}'을 포함하는 행을 찾을 수 없습니다.")
-                            continue
-
-                        target_row = df.loc[target_row_name]
-                        if isinstance(target_row, pd.DataFrame):
-                            target_row = target_row.iloc[0]
-                        
-                        if col_index < len(target_row):
-                            value = target_row.iloc[col_index]
-                            if pd.notna(value):
-                                value_str = str(value).replace(',', '').replace('%', '').strip()
-                                if value_str and value_str not in ('-', 'N/A'):
-                                    try:
-                                        data[key] = float(value_str)
-                                    except (ValueError, TypeError):
-                                        pass
                 except Exception as e:
                     logging.warning(f"FnGuide '{code}' Financial Highlight 테이블 파싱 실패: {e}")
             else:
                 logging.warning(f"FnGuide에서 '{code}' 종목의 Financial Highlight 테이블을 찾을 수 없습니다.")
 
+            # 실적이슈 데이터 추출
+            self._extract_performance_issues(soup, data)
+
             # 모든 키에 대해 값이 없으면 None으로 설정
-            for key in ['EPS', 'ROE', 'BPS', 'IndustPER']:
+            keys_to_check = [
+                'EPS', 'ROE', 'BPS', 'IndustPER', 
+                'PER_pred', 'PBR_pred', 'EPS_pred', 'ROE_pred', 'BPS_pred',
+                'perf_yoy', 'perf_vs_3m_ago', 'perf_vs_consensus'
+            ]
+            for key in keys_to_check:
                 if key not in data:
                     data[key] = None
             return data
@@ -176,6 +166,34 @@ class CompanyManager:
         except Exception as e:
             logging.warning(f"FnGuide에서 '{code}' 종목의 재무 정보 스크레이핑 실패: {e}")
             return {}
+
+    def _extract_from_table(self, df, data_dict, data_key, row_name, col_index, code):
+        """Financial Highlight 테이블(DataFrame)에서 특정 값을 추출하는 헬퍼 함수"""
+        # 컬럼 인덱스가 유효한지 확인
+        if col_index >= len(df.columns):
+            logging.debug(f"FnGuide '{code}': '{row_name}'에 대한 컬럼 인덱스 {col_index}가 범위를 벗어났습니다.")
+            return
+
+        try:
+            # row_name을 포함하는 행의 이름을 찾음 (예: 'EPS(원)')
+            target_row_name = next(ix for ix in df.index if row_name in ix)
+        except StopIteration:
+            logging.debug(f"FnGuide '{code}': Financial Highlight 테이블에서 '{row_name}'을(를) 포함하는 행을 찾을 수 없습니다.")
+            return
+
+        target_row = df.loc[target_row_name]
+        if isinstance(target_row, pd.DataFrame):
+            target_row = target_row.iloc[0]
+        
+        if col_index < len(target_row):
+            value = target_row.iloc[col_index]
+            if pd.notna(value):
+                value_str = str(value).replace(',', '').replace('%', '').strip()
+                if value_str and value_str not in ('-', 'N/A'):
+                    try:
+                        data_dict[data_key] = float(value_str)
+                    except (ValueError, TypeError):
+                        pass # 값을 float으로 변환할 수 없는 경우, 키가 설정되지 않음
 
     def _extract_numeric_value(self, soup, selector, data_dict, key):
         """CSS 선택자를 사용하여 HTML 요소에서 숫자 값을 추출하는 헬퍼 함수"""
@@ -194,6 +212,39 @@ class CompanyManager:
         except (ValueError, TypeError) as e:
             logging.warning(f"'{selector}' 선택자를 사용하여 '{key}'에 대한 값을 구문 분석할 수 없습니다: {e}")
             data_dict[key] = None
+
+    def _extract_performance_issues(self, soup, data_dict):
+        """실적이슈 테이블에서 비교 데이터 추출"""
+        try:
+            issue_table = soup.select_one('#svdMainGrid2')
+            if not issue_table:
+                return
+            
+            # 테이블 데이터프레임으로 변환
+            df_list = pd.read_html(StringIO(str(issue_table)))
+            if not df_list:
+                return
+                
+            df_issue = df_list[0]
+            
+            # 키워드로 필요한 컬럼 찾기
+            column_keywords = {
+                'perf_yoy': '전년동기대비',
+                'perf_vs_3m_ago': '3개월전',
+                'perf_vs_consensus': '예상실적대비'
+            }
+            
+            for key, keyword in column_keywords.items():
+                for col in df_issue.columns:
+                    # 컬럼 이름은 튜플일 수 있으므로 문자열로 변환하여 확인
+                    if keyword in str(col):
+                        value = df_issue.loc[0, col] # 첫 번째 행(매출액 기준)의 값
+                        if pd.notna(value) and str(value).strip() not in ('-', 'N/A'):
+                            # 숫자인 경우에도 문자열로 저장
+                            data_dict[key] = str(value).strip()
+                        break # 해당 키워드에 대한 첫 번째 컬럼만 사용
+        except Exception as e:
+            logging.warning(f"실적이슈 데이터 추출 중 오류 발생: {e}")
 
     def save_companies_from_fdr(self, limit=None):
         """FinanceDataReader와 FnGuide를 사용하여 종목 정보를 가져와 DB에 분리하여 저장하는 메서드"""
@@ -223,15 +274,19 @@ class CompanyManager:
 
                 if per_value is not None and pd.notna(per_value) and per_value > 0 and eps_value is not None and pd.notna(eps_value) and eps_value >= 0:
                     # companies 테이블에 저장할 데이터
+                    fnguide_url = f"https://comp.fnguide.com/SVO2/ASP/SVD_Main.asp?pGB=1&gicode=A{row.get('Code')}&cID=&MenuYn=Y&ReportGB=&NewMenuID=101&stkGb=701"
                     companies_to_upsert.append((
-                        row.get('Code'), row.get('Name'), row.get('Market')
+                        row.get('Code'), row.get('Name'), row.get('Market'), fnguide_url
                     ))
                     
                     # daily_financials 테이블에 저장할 데이터
                     financials_to_insert.append((
                         row.get('Code'), today_date, row.get('Marcap'), row.get('Stocks'),
                         row.get('PBR'), row.get('PER'), row.get('IndustPER'), row.get('EPS'),
-                        row.get('ROE'), row.get('DivRate'), row.get('BPS')
+                        row.get('ROE'), row.get('DivRate'), row.get('BPS'),
+                        row.get('PER_pred'), row.get('PBR_pred'), row.get('EPS_pred'),
+                        row.get('ROE_pred'), row.get('BPS_pred'),
+                        row.get('perf_yoy'), row.get('perf_vs_3m_ago'), row.get('perf_vs_consensus')
                     ))
                 
                 # 목표 개수(limit)를 채우면 중단
@@ -243,11 +298,12 @@ class CompanyManager:
             if companies_to_upsert:
                 logging.info(f"총 {len(companies_to_upsert)}개 종목의 기본 정보를 데이터베이스에 저장 또는 업데이트합니다.")
                 query_companies = """
-                INSERT INTO companies (code, name, market) 
-                VALUES (%s, %s, %s)
+                INSERT INTO companies (code, name, market, url) 
+                VALUES (%s, %s, %s, %s)
                 ON DUPLICATE KEY UPDATE
                     name = VALUES(name),
-                    market = VALUES(market);
+                    market = VALUES(market),
+                    url = VALUES(url);
                 """
                 self.db_access.execute_many_query(query_companies, companies_to_upsert)
                 logging.info(f"성공적으로 {len(companies_to_upsert)}개 종목 기본 정보를 저장/업데이트했습니다.")
@@ -257,10 +313,32 @@ class CompanyManager:
             # daily_financials 테이블에 재무 정보 저장
             if financials_to_insert:
                 logging.info(f"총 {len(financials_to_insert)}개 종목의 일일 재무 정보를 데이터베이스에 저장합니다.")
-                # (code, date)가 중복될 경우 무시하고 넘어갑니다.
+                # (code, date)가 중복될 경우 최신 정보로 업데이트합니다.
                 query_financials = """
-                INSERT IGNORE INTO daily_financials (code, date, marcap, stocks, pbr, per, indust_per, eps, roe, div_yield, bps) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                INSERT INTO daily_financials (
+                    code, date, marcap, stocks, pbr, per, indust_per, eps, roe, div_yield, bps, 
+                    per_pred, pbr_pred, eps_pred, roe_pred, bps_pred,
+                    perf_yoy, perf_vs_3m_ago, perf_vs_consensus
+                ) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    marcap = VALUES(marcap),
+                    stocks = VALUES(stocks),
+                    pbr = VALUES(pbr),
+                    per = VALUES(per),
+                    indust_per = VALUES(indust_per),
+                    eps = VALUES(eps),
+                    roe = VALUES(roe),
+                    div_yield = VALUES(div_yield),
+                    bps = VALUES(bps),
+                    per_pred = VALUES(per_pred),
+                    pbr_pred = VALUES(pbr_pred),
+                    eps_pred = VALUES(eps_pred),
+                    roe_pred = VALUES(roe_pred),
+                    bps_pred = VALUES(bps_pred),
+                    perf_yoy = VALUES(perf_yoy),
+                    perf_vs_3m_ago = VALUES(perf_vs_3m_ago),
+                    perf_vs_consensus = VALUES(perf_vs_consensus);
                 """
                 self.db_access.execute_many_query(query_financials, financials_to_insert)
                 logging.info(f"성공적으로 {len(financials_to_insert)}개 종목의 일일 재무 정보를 저장했습니다.")
