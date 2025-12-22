@@ -1,5 +1,3 @@
-logs/anal_stocks.log
-reports/uptrend_stocks_20d.xlsx
-logs/anal_stocks.log
-__pycache__/
-data/
+*.xlsx
+*.log
+*.pyc
