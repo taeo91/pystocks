@@ -2,26 +2,61 @@ import os
 import time
 import datetime
 import logging
+from dotenv import load_dotenv
 
 from AppManager import get_db_connection
+from CompanyManager import CompanyManager
 from StockPriceManager import StockPriceManager
+from ValuationManager import ValuationManager
 
 if __name__ == "__main__":
-    # AppManager를 사용하여 데이터베이스 연결 및 로깅 설정
+    # .env 파일 로드
+    load_dotenv()
+    
+    # 로깅 설정
+    log_dir = 'logs'
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(os.path.join(log_dir, f"pystocks_{datetime.date.today()}.log")),
+            logging.StreamHandler()
+        ]
+    )
+
+    # AppManager를 사용하여 데이터베이스 연결
     with get_db_connection() as db_access:
-        logging.info("주가 분석 스크립트 시작: %s", time.ctime())
-        
-        # StockPriceManager를 사용하여 가격 정보 테이블 생성 및 업데이트
+        logging.info("="*50)
+        logging.info("주식 데이터 분석 및 가치 평가 스크립트 시작: %s", time.ctime())
+        logging.info("="*50)
+
+        stock_count_str = os.getenv('STOCK_COUNT')
+        limit = int(stock_count_str) if stock_count_str else None
+
+        # 1. CompanyManager 실행: 종목 정보 및 재무 데이터 업데이트
+        logging.info("[1/3] 종목 정보 및 재무 데이터 업데이트 시작...")
+        company_manager = CompanyManager(db_access)
+        if company_manager.create_companies_table() and company_manager.create_daily_financials_table():
+            company_manager.save_companies_from_fdr(limit=limit)
+        logging.info("[1/3] 종목 정보 및 재무 데이터 업데이트 완료.")
+
+        # 2. StockPriceManager 실행: 주가 정보 및 기술적 지표 업데이트
+        logging.info("[2/3] 주가 정보 및 기술적 지표 업데이트 시작...")
         price_manager = StockPriceManager(db_access)
-        if price_manager.create_prices_table():
-            logging.info("주식 가격 정보 업데이트를 시작합니다.")
+        if price_manager.create_prices_table() and price_manager.indicator_manager.create_indicators_tables():
+            start_date_str = os.getenv('PRICE_FETCH_START_DATE')
+            price_manager.save_daily_prices(start_date=start_date_str, limit=limit)
+            price_manager.update_all_indicators(limit=limit)
+        logging.info("[2/3] 주가 정보 및 기술적 지표 업데이트 완료.")
 
-            # 환경 변수에서 시작 날짜를 가져오고, 없으면 1년 전 날짜로 설정
-            one_year_ago = datetime.date.today() - datetime.timedelta(days=365)
-            start_date = os.getenv('PRICE_FETCH_START_DATE', one_year_ago.strftime('%Y-%m-%d'))
+        # 3. ValuationManager 실행: 가치 평가
+        logging.info("[3/3] 가치 평가 계산 및 Excel 파일 저장 시작...")
+        valuation_manager = ValuationManager(db_access)
+        valuation_manager.calculate_and_save_valuations(limit=limit)
+        logging.info("[3/3] 가치 평가 계산 및 저장 완료.")
 
-            stock_count = os.getenv('STOCK_COUNT')
-            limit = int(stock_count) if stock_count else None
-            price_manager.save_daily_prices(start_date=start_date, limit=limit)
-        
-        logging.info("주가 분석 스크립트 종료: %s", time.ctime())
+        logging.info("="*50)
+        logging.info("모든 작업 완료: %s", time.ctime())
+        logging.info("="*50)
