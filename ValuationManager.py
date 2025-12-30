@@ -109,7 +109,7 @@ class ValuationManager:
 
             query_price = """
             SELECT p.close_price 
-            FROM prices p
+            FROM company_prices p
             JOIN companies c ON p.company_id = c.id
             WHERE c.code = %s
             ORDER BY p.trade_date DESC LIMIT 1
@@ -151,7 +151,7 @@ class ValuationManager:
                         company_id,
                         close_price,
                         ROW_NUMBER() OVER(PARTITION BY company_id ORDER BY trade_date DESC) as rn
-                    FROM prices
+                    FROM company_prices
                 ) AS p_latest ON c.id = p_latest.company_id AND p_latest.rn = 1
             WHERE
                 df.date = %s

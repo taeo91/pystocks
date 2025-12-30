@@ -170,7 +170,7 @@ class Screener:
                 FROM recent_golden_cross rgc
                 JOIN macd m ON rgc.company_id = m.company_id AND m.trade_date >= rgc.cross_date
                 JOIN moving_average ma ON m.company_id = ma.company_id AND m.trade_date = ma.trade_date
-                JOIN prices p ON m.company_id = p.company_id AND m.trade_date = p.trade_date
+                JOIN company_prices p ON m.company_id = p.company_id AND m.trade_date = p.trade_date
             )
             -- 3. 최종 조건 필터링
             SELECT
@@ -215,7 +215,7 @@ class Screener:
                     LAG(p.close_price) OVER (ORDER BY p.trade_date) as prev_close,
                     -- 기간 내 누적 최고가 (MDD 계산용)
                     MAX(p.high_price) OVER (ORDER BY p.trade_date) as running_max_high
-                FROM prices p
+                FROM company_prices p
                 JOIN companies c ON p.company_id = c.id
                 WHERE c.code = %s
                   AND p.trade_date >= %s

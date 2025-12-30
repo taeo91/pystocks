@@ -77,7 +77,7 @@ class IndicatorManager:
         """특정 회사의 MACD 및 RSI 지표를 계산하고 DB에 저장하는 메서드"""
         try:
             # 가격 데이터 가져오기
-            query = "SELECT trade_date, close_price FROM prices WHERE company_id = %s ORDER BY trade_date"
+            query = "SELECT trade_date, close_price FROM company_prices WHERE company_id = %s ORDER BY trade_date"
             cursor = self.db_access.connection.cursor(dictionary=True)
             cursor.execute(query, (company_id,))
             prices_data = cursor.fetchall()
