@@ -72,6 +72,8 @@ class StockManager:
                 eps_pred DECIMAL(15, 2) COMMENT 'EPS(예상)',
                 roe_pred DECIMAL(10, 2) COMMENT 'ROE(예상)',
                 bps_pred DECIMAL(15, 2) COMMENT 'BPS(예상)',
+                max_drawdown DECIMAL(10, 2) COMMENT '최대낙폭(1년)',
+                avg_drawdown DECIMAL(10, 2) COMMENT '평균낙폭(1년)',
                 perf_yoy VARCHAR(50) COMMENT '실적이슈(전년동기대비)',
                 perf_vs_3m_ago VARCHAR(50) COMMENT '실적이슈(3개월전대비)',
                 perf_vs_consensus VARCHAR(50) COMMENT '실적이슈(예상실적대비)',
@@ -276,6 +278,58 @@ class StockManager:
         except Exception as e:
             logging.error(f"An unexpected error occurred in update_all_indicators: {e}")
 
+    def update_risk_metrics(self, limit=None):
+        """DB에 저장된 주가 정보를 바탕으로 최대낙폭/평균낙폭을 계산하여 daily_financials에 업데이트"""
+        try:
+            logging.info("종목별 리스크 지표(MDD, 평균낙폭) 계산 및 업데이트 시작...")
+            
+            cursor = self.db_access.connection.cursor(dictionary=True)
+            company_query = "SELECT id, code FROM companies"
+            if limit:
+                company_query += f" LIMIT {limit}"
+            cursor.execute(company_query)
+            companies = cursor.fetchall()
+            cursor.close()
+   
+            start_date = (datetime.date.today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
+            today_date = datetime.date.today()
+
+            for company in companies:
+                company_id = company['id']
+                code = company['code']
+
+                query = """
+                SELECT trade_date, close_price, high_price, low_price
+                FROM company_prices
+                WHERE company_id = %s AND trade_date >= %s
+                ORDER BY trade_date ASC
+                """
+                prices = self.db_access.fetch_all(query, (company_id, start_date))
+                
+                if not prices:
+                    continue
+
+                df = pd.DataFrame(prices, columns=['trade_date', 'close_price', 'high_price', 'low_price'])
+                df[['close_price', 'high_price', 'low_price']] = df[['close_price', 'high_price', 'low_price']].astype(float)
+
+                # Running Max (High 기준)
+                df['running_max'] = df['high_price'].cummax()
+                
+                # MDD: ((Low - Running_Max) / Running_Max) * 100 의 최솟값
+                df['dd_low'] = (df['low_price'] - df['running_max']) / df['running_max'] * 100
+                max_drawdown = df['dd_low'].min()
+                
+                # Avg Drawdown: ((Close - Running_Max) / Running_Max) * 100 의 평균
+                df['dd_close'] = (df['close_price'] - df['running_max']) / df['running_max'] * 100
+                avg_drawdown = df['dd_close'].mean()
+
+                update_query = "UPDATE daily_financials SET max_drawdown = %s, avg_drawdown = %s WHERE code = %s AND date = %s"
+                self.db_access.execute_query(update_query, (max_drawdown, avg_drawdown, code, today_date))
+            
+            logging.info("리스크 지표 업데이트 완료.")
+        except Exception as e:
+            logging.error(f"리스크 지표 업데이트 중 오류 발생: {e}")
+
     # --- FnGuide Scraping Helpers ---
     def get_financial_data_from_fnguide(self, code, is_retry=False):
         try:
@@ -375,5 +429,6 @@ if __name__ == "__main__":
             start_date = os.getenv('PRICE_FETCH_START_DATE')
             stock_manager.save_daily_prices(start_date=start_date, limit=limit)
             stock_manager.update_all_indicators(limit=limit)
+            stock_manager.update_risk_metrics(limit=limit)
             
         logging.info("StockManager 스크립트 종료: %s", time.ctime())

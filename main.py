@@ -44,6 +44,7 @@ if __name__ == "__main__":
             start_date_str = os.getenv('PRICE_FETCH_START_DATE')
             stock_manager.save_daily_prices(start_date=start_date_str, limit=limit)
             stock_manager.update_all_indicators(limit=limit)
+            stock_manager.update_risk_metrics(limit=limit)
         logging.info("[1/2] 주식 데이터 통합 업데이트 완료.")
 
         # 3. ValuationManager 실행: 가치 평가 (단계 번호 조정)
