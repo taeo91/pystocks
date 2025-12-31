@@ -118,6 +118,10 @@ class StockManager:
             logging.info("KRX에서 전체 종목 목록을 가져옵니다...")
             stocks = fdr.StockListing('KRX')
             stocks = stocks.sort_values(by='Marcap', ascending=False)
+
+            # 설정된 개수만큼만 자르기 (상위 종목만 검토하여 불필요한 스크래핑 방지)
+            if limit:
+                stocks = stocks.head(limit)
             
             today_date = datetime.date.today()
             companies_to_upsert = []
@@ -283,16 +287,27 @@ class StockManager:
         try:
             logging.info("종목별 리스크 지표(MDD, 평균낙폭) 계산 및 업데이트 시작...")
             
+            today_date = datetime.date.today()
+            
             cursor = self.db_access.connection.cursor(dictionary=True)
-            company_query = "SELECT id, code FROM companies"
+            # daily_financials에 오늘 날짜 데이터가 있는 종목만 대상으로 함 (UPDATE 효율성 및 정합성)
+            company_query = """
+            SELECT c.id, c.code 
+            FROM companies c
+            JOIN daily_financials df ON c.code = df.code
+            WHERE df.date = %s
+            """
             if limit:
                 company_query += f" LIMIT {limit}"
-            cursor.execute(company_query)
+            cursor.execute(company_query, (today_date,))
             companies = cursor.fetchall()
             cursor.close()
-   
-            start_date = (datetime.date.today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
-            today_date = datetime.date.today()
+            
+            if not companies:
+                logging.warning("리스크 지표를 업데이트할 대상 종목이 없습니다 (daily_financials 데이터 부재).")
+                return
+
+            start_date = (today_date - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
 
             for company in companies:
                 company_id = company['id']
@@ -312,16 +327,25 @@ class StockManager:
                 df = pd.DataFrame(prices, columns=['trade_date', 'close_price', 'high_price', 'low_price'])
                 df[['close_price', 'high_price', 'low_price']] = df[['close_price', 'high_price', 'low_price']].astype(float)
 
-                # Running Max (High 기준)
-                df['running_max'] = df['high_price'].cummax()
+                # 전일 종가 계산
+                df['prev_close'] = df['close_price'].shift(1)
                 
-                # MDD: ((Low - Running_Max) / Running_Max) * 100 의 최솟값
-                df['dd_low'] = (df['low_price'] - df['running_max']) / df['running_max'] * 100
-                max_drawdown = df['dd_low'].min()
+                # 최대 하락률: 전일 종가 대비 당일 저가 등락률의 최솟값 (일일 최대 손실폭)
+                # (Low - Prev_Close) / Prev_Close * 100
+                df['daily_drop_max'] = (df['low_price'] - df['prev_close']) / df['prev_close'] * 100
+                max_drawdown = df['daily_drop_max'].min()
                 
-                # Avg Drawdown: ((Close - Running_Max) / Running_Max) * 100 의 평균
-                df['dd_close'] = (df['close_price'] - df['running_max']) / df['running_max'] * 100
-                avg_drawdown = df['dd_close'].mean()
+                # 평균 하락률: 전일 종가 대비 당일 종가 등락률 중 음수인 날들의 평균
+                # (Close - Prev_Close) / Prev_Close * 100
+                df['daily_change'] = (df['close_price'] - df['prev_close']) / df['prev_close'] * 100
+
+                # 하락한 날(0보다 작은 날)만 필터링하여 평균 계산
+                drop_days = df[df['daily_change'] < 0]
+                avg_drawdown = drop_days['daily_change'].mean() if not drop_days.empty else 0.0
+
+                # NaN 처리
+                if pd.isna(max_drawdown): max_drawdown = 0.0
+                if pd.isna(avg_drawdown): avg_drawdown = 0.0
 
                 update_query = "UPDATE daily_financials SET max_drawdown = %s, avg_drawdown = %s WHERE code = %s AND date = %s"
                 self.db_access.execute_query(update_query, (max_drawdown, avg_drawdown, code, today_date))
