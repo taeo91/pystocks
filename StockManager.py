@@ -10,7 +10,6 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import FinanceDataReader as fdr
 from AppManager import get_db_connection
-from IndicatorManager import IndicatorManager
 
 class StockManager:
     """
@@ -23,7 +22,6 @@ class StockManager:
             db_access (dbaccess): 데이터베이스 접근 객체
         """
         self.db_access = db_access
-        self.indicator_manager = IndicatorManager(db_access)
 
     def create_tables(self):
         """주식 관련 테이블(companies, daily_financials, prices)을 생성"""
@@ -263,25 +261,6 @@ class StockManager:
         except Exception as e:
             logging.error(f"An unexpected error occurred in save_daily_prices: {e}")
 
-    def update_all_indicators(self, limit=None):
-        """DB에 저장된 모든 회사에 대해 기술적 지표를 계산하고 저장"""
-        try:
-            cursor = self.db_access.connection.cursor(dictionary=True)
-            company_query = "SELECT id, code FROM companies"
-            if limit:
-                company_query += f" LIMIT {limit}"
-            cursor.execute(company_query)
-            companies_to_update = cursor.fetchall()
-            cursor.close()
-
-            logging.info(f"기술적 지표 계산을 시작합니다. 대상 종목 수: {len(companies_to_update)}")
-
-            for company in companies_to_update:
-                self.indicator_manager.calculate_and_save_indicators(company['id'])
-        
-        except Exception as e:
-            logging.error(f"An unexpected error occurred in update_all_indicators: {e}")
-
     def update_risk_metrics(self, limit=None):
         """DB에 저장된 주가 정보를 바탕으로 최대낙폭/평균낙폭을 계산하여 daily_financials에 업데이트"""
         try:
@@ -444,7 +423,7 @@ if __name__ == "__main__":
         logging.info("StockManager 스크립트 시작: %s", time.ctime())
         
         stock_manager = StockManager(db_access)
-        if stock_manager.create_tables() and stock_manager.indicator_manager.create_indicators_tables():
+        if stock_manager.create_tables():
             stock_count_str = os.getenv('STOCK_COUNT')
             limit = int(stock_count_str) if stock_count_str else None
             
@@ -452,7 +431,6 @@ if __name__ == "__main__":
             
             start_date = os.getenv('PRICE_FETCH_START_DATE')
             stock_manager.save_daily_prices(start_date=start_date, limit=limit)
-            stock_manager.update_all_indicators(limit=limit)
             stock_manager.update_risk_metrics(limit=limit)
             
         logging.info("StockManager 스크립트 종료: %s", time.ctime())

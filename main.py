@@ -35,15 +35,14 @@ if __name__ == "__main__":
         limit = int(stock_count_str) if stock_count_str else None
 
         # 1 & 2. StockManager 실행: 종목 정보, 재무 데이터, 주가 정보, 기술적 지표 업데이트
-        logging.info("[1/2] 주식 데이터(정보, 재무, 시세, 지표) 통합 업데이트 시작...")
+        logging.info("[1/2] 주식 데이터(정보, 재무, 시세) 통합 업데이트 시작...")
         stock_manager = StockManager(db_access)
         
-        if stock_manager.create_tables() and stock_manager.indicator_manager.create_indicators_tables():
+        if stock_manager.create_tables():
             stock_manager.save_stock_info(limit=limit)
             
             start_date_str = os.getenv('PRICE_FETCH_START_DATE')
             stock_manager.save_daily_prices(start_date=start_date_str, limit=limit)
-            stock_manager.update_all_indicators(limit=limit)
             stock_manager.update_risk_metrics(limit=limit)
         logging.info("[1/2] 주식 데이터 통합 업데이트 완료.")
 
