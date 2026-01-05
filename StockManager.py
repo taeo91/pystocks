@@ -70,8 +70,6 @@ class StockManager:
                 eps_pred DECIMAL(15, 2) COMMENT 'EPS(예상)',
                 roe_pred DECIMAL(10, 2) COMMENT 'ROE(예상)',
                 bps_pred DECIMAL(15, 2) COMMENT 'BPS(예상)',
-                max_drawdown DECIMAL(10, 2) COMMENT '최대낙폭(1년)',
-                avg_drawdown DECIMAL(10, 2) COMMENT '평균낙폭(1년)',
                 perf_yoy VARCHAR(50) COMMENT '실적이슈(전년동기대비)',
                 perf_vs_3m_ago VARCHAR(50) COMMENT '실적이슈(3개월전대비)',
                 perf_vs_consensus VARCHAR(50) COMMENT '실적이슈(예상실적대비)',
