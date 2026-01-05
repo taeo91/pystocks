@@ -73,6 +73,7 @@ class StockManager:
                 perf_yoy VARCHAR(50) COMMENT '실적이슈(전년동기대비)',
                 perf_vs_3m_ago VARCHAR(50) COMMENT '실적이슈(3개월전대비)',
                 perf_vs_consensus VARCHAR(50) COMMENT '실적이슈(예상실적대비)',
+                max_daily_fall_rate DECIMAL(10, 2) COMMENT '1일 최대 하락률',
                 FOREIGN KEY (code) REFERENCES companies (code) ON DELETE CASCADE,
                 UNIQUE KEY (code, date)
             ) COMMENT '일일 재무 정보';
@@ -85,10 +86,10 @@ class StockManager:
             return False
 
     def _create_prices_table(self):
-        """'company_prices' 테이블 생성"""
+        """'prices' 테이블 생성"""
         try:
             query = """
-            CREATE TABLE IF NOT EXISTS company_prices (
+            CREATE TABLE IF NOT EXISTS prices (
                 price_id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 company_id INT NOT NULL,
                 trade_date DATE NOT NULL,
@@ -102,10 +103,10 @@ class StockManager:
             )
             """
             self.db_access.execute_query(query)
-            logging.info("Table 'company_prices' created or already exists.")
+            logging.info("Table 'prices' created or already exists.")
             return True
         except Exception as e:
-            logging.error(f"Error creating 'company_prices' table: {e}")
+            logging.error(f"Error creating 'prices' table: {e}")
             return False
 
     def save_stock_info(self, limit=None):
@@ -227,7 +228,7 @@ class StockManager:
                 company_id = company['id']
                 stock_code = company['code']
                 
-                last_date_query = "SELECT MAX(trade_date) FROM company_prices WHERE company_id = %s"
+                last_date_query = "SELECT MAX(trade_date) FROM prices WHERE company_id = %s"
                 cursor.execute(last_date_query, (company_id,))
                 last_date_result = cursor.fetchone()
                 
@@ -235,9 +236,13 @@ class StockManager:
                 if last_date_result and last_date_result.get('MAX(trade_date)'):
                     fetch_start_date = last_date_result['MAX(trade_date)'] + datetime.timedelta(days=1)
                     fetch_start_date = fetch_start_date.strftime('%Y-%m-%d')
+                
+                logging.info(f"[{stock_code}] Fetching price data from {fetch_start_date}")
 
                 try:
                     df = fdr.DataReader(stock_code, start=fetch_start_date)
+                    logging.info(f"[{stock_code}] fdr.DataReader returned {len(df)} rows.")
+
                     if df.empty:
                         continue
 
@@ -247,23 +252,21 @@ class StockManager:
                     ]
                     
                     if data_to_insert:
+                        logging.info(f"[{stock_code}] Preparing to insert {len(data_to_insert)} price records.")
                         price_query = """
-                        INSERT INTO company_prices (company_id, trade_date, open_price, high_price, low_price, close_price, volume)
+                        INSERT INTO prices (company_id, trade_date, open_price, high_price, low_price, close_price, volume)
                         VALUES (%s, %s, %s, %s, %s, %s, %s)
                         ON DUPLICATE KEY UPDATE 
                             open_price=VALUES(open_price), high_price=VALUES(high_price), low_price=VALUES(low_price), 
                             close_price=VALUES(close_price), volume=VALUES(volume)
                         """
-                        insert_cursor = self.db_access.connection.cursor()
-                        insert_cursor.executemany(price_query, data_to_insert)
-                        self.db_access.connection.commit()
-                        insert_cursor.close()                        
+                        self.db_access.execute_many_query(price_query, data_to_insert)
 
                 except Exception as e:
                     if '404' in str(e):
                         logging.warning(f"'{stock_code}' 종목 데이터를 찾을 수 없어(404) DB에서 삭제를 시도합니다.")
                         try:
-                            self.db_access.execute_query("DELETE FROM company_prices WHERE company_id = %s", (company_id,))
+                            self.db_access.execute_query("DELETE FROM prices WHERE company_id = %s", (company_id,))
                             self.db_access.execute_query("DELETE FROM companies WHERE id = %s", (company_id,))
                         except Exception as delete_e:
                             logging.error(f"'{stock_code}' 종목 DB 삭제 중 오류 발생: {delete_e}")
@@ -276,9 +279,9 @@ class StockManager:
             logging.error(f"An unexpected error occurred in save_daily_prices: {e}")
 
     def update_risk_metrics(self, limit=None):
-        """DB에 저장된 주가 정보를 바탕으로 최대낙폭/평균낙폭을 계산하여 daily_financials에 업데이트"""
+        """DB에 저장된 주가 정보를 바탕으로 1일 최대 하락률을 계산하여 daily_financials에 업데이트"""
         try:
-            logging.info("종목별 리스크 지표(MDD, 평균낙폭) 계산 및 업데이트 시작...")
+            logging.info("종목별 리스크 지표(1일 최대 하락률) 계산 및 업데이트 시작...")
             
             today_date = datetime.date.today()
             
@@ -307,41 +310,37 @@ class StockManager:
                 code = company['code']
 
                 query = """
-                SELECT trade_date, close_price, high_price, low_price
-                FROM company_prices
+                SELECT trade_date, close_price
+                FROM prices
                 WHERE company_id = %s AND trade_date >= %s
                 ORDER BY trade_date ASC
                 """
                 prices = self.db_access.fetch_all(query, (company_id, start_date))
                 
-                if not prices:
+                logging.info(f"[{code}] Found {len(prices) if prices else 0} price records.")
+
+                # 최소 2일치 데이터가 있어야 하락률 계산 가능
+                if not prices or len(prices) < 2: 
+                    logging.warning(f"[{code}] Skipping metric calculation due to insufficient price data ({len(prices) if prices else 0} records).")
                     continue
 
-                df = pd.DataFrame(prices, columns=['trade_date', 'close_price', 'high_price', 'low_price'])
-                df[['close_price', 'high_price', 'low_price']] = df[['close_price', 'high_price', 'low_price']].astype(float)
+                df = pd.DataFrame(prices, columns=['trade_date', 'close_price'])
+                df['close_price'] = df['close_price'].astype(float)
 
-                # 전일 종가 계산
-                df['prev_close'] = df['close_price'].shift(1)
+                # 1일 수익률 계산
+                df['daily_return'] = df['close_price'].pct_change() * 100
                 
-                # 최대 하락률: 전일 종가 대비 당일 저가 등락률의 최솟값 (일일 최대 손실폭)
-                # (Low - Prev_Close) / Prev_Close * 100
-                df['daily_drop_max'] = (df['low_price'] - df['prev_close']) / df['prev_close'] * 100
-                max_drawdown = df['daily_drop_max'].min()
+                # 1일 최대 하락률 (가장 작은 값)
+                max_fall_rate = df['daily_return'].min()
+                logging.info(f"[{code}] Calculated max fall rate: {max_fall_rate}")
                 
-                # 평균 하락률: 전일 종가 대비 당일 종가 등락률 중 음수인 날들의 평균
-                # (Close - Prev_Close) / Prev_Close * 100
-                df['daily_change'] = (df['close_price'] - df['prev_close']) / df['prev_close'] * 100
+                # 하락이 없거나(NaN, 0 이상) 데이터가 부족한 경우 0으로 처리
+                if pd.isna(max_fall_rate) or max_fall_rate >= 0:
+                    max_fall_rate = 0.0
 
-                # 하락한 날(0보다 작은 날)만 필터링하여 평균 계산
-                drop_days = df[df['daily_change'] < 0]
-                avg_drawdown = drop_days['daily_change'].mean() if not drop_days.empty else 0.0
-
-                # NaN 처리
-                if pd.isna(max_drawdown): max_drawdown = 0.0
-                if pd.isna(avg_drawdown): avg_drawdown = 0.0
-
-                update_query = "UPDATE daily_financials SET max_drawdown = %s, avg_drawdown = %s WHERE code = %s AND date = %s"
-                self.db_access.execute_query(update_query, (max_drawdown, avg_drawdown, code, today_date))
+                logging.info(f"[{code}] Final value to update: {max_fall_rate}")
+                update_query = "UPDATE daily_financials SET max_daily_fall_rate = %s WHERE code = %s AND date = %s"
+                self.db_access.execute_query(update_query, (max_fall_rate, code, today_date))
             
             logging.info("리스크 지표 업데이트 완료.")
         except Exception as e:
@@ -362,9 +361,7 @@ class StockManager:
             data = {}
 
             summary_mapping = [
-                ('div.corp_group2 > dl:nth-of-type(1) > dd', 'PER'),
-                ('div.corp_group2 > dl:nth-of-type(2) > dd', 'IndustPER'),
-                ('div.corp_group2 > dl:nth-of-type(4) > dd', 'PBR'),
+                ('div.corp_group2 > dl:nth-of-type(3) > dd', 'IndustPER'),
                 ('div.corp_group2 > dl:nth-of-type(5) > dd', 'DivRate')
             ]
             for selector, key in summary_mapping:

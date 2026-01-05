@@ -3,7 +3,7 @@ import mysql.connector
 from mysql.connector import Error
 import logging
 
-class dbaccess:
+class DBAccessManager:
     def __init__(self, host, user, password, database):
         self.host = host
         self.user = user
@@ -40,7 +40,6 @@ class dbaccess:
         try:
             cursor.execute(query, params)
             self.connection.commit()
-            return cursor
         except Error as e:
             logging.error(f"Query execution failed: {e}")
             return None

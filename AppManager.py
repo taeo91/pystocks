@@ -4,7 +4,7 @@ import logging
 import time
 from contextlib import contextmanager
 from dotenv import load_dotenv
-from DBAccessManager import dbaccess
+from DBAccessManager import DBAccessManager
 
 def setup_logging():
     """공통 로깅 설정"""
@@ -44,7 +44,7 @@ def get_db_connection():
 
     db_access = None
     try:
-        db_access = dbaccess(host, user, password, database)
+        db_access = DBAccessManager(host, user, password, database)
         connection = db_access.connect_to_mysql()
 
         if not connection:
