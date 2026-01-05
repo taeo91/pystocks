@@ -113,9 +113,25 @@ class StockManager:
     def save_stock_info(self, limit=None):
         """FinanceDataReader와 FnGuide를 사용하여 종목 정보를 가져와 DB에 저장"""
         try:
-            logging.info("KRX에서 전체 종목 목록을 가져옵니다...")
-            stocks = fdr.StockListing('KRX')
-            stocks = stocks.sort_values(by='Marcap', ascending=False)
+            logging.info("FinanceDataReader에서 전체 종목 목록을 가져옵니다...")
+            try:
+                stocks_kospi = fdr.StockListing('KOSPI')
+                stocks_kosdaq = fdr.StockListing('KOSDAQ')
+                stocks = pd.concat([stocks_kospi, stocks_kosdaq], ignore_index=True)
+                
+                # 컬럼명 변경 (기존 코드와의 호환성)
+                stocks.rename(columns={'Symbol': 'Code', 'DividendYield': 'DivRate'}, inplace=True)
+                
+                # fdr에서 가져온 데이터에 'IndustPER'이 없으면 None으로 채움 (fnguide에서 채워짐)
+                if 'IndustPER' not in stocks.columns:
+                    stocks['IndustPER'] = None
+
+                stocks = stocks.sort_values(by='Marcap', ascending=False).reset_index(drop=True)
+                logging.info(f"FDR에서 {len(stocks)}개 종목 정보를 가져왔습니다.")
+
+            except Exception as e:
+                logging.error(f"FinanceDataReader에서 종목 목록을 가져오는 중 오류 발생: {e}")
+                return
 
             # 설정된 개수만큼만 자르기 (상위 종목만 검토하여 불필요한 스크래핑 방지)
             if limit:
