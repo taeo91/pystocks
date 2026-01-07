@@ -72,7 +72,6 @@ class StockManager:
                 bps_pred DECIMAL(15, 2) COMMENT 'BPS(예상)',
                 perf_yoy VARCHAR(50) COMMENT '실적이슈(전년동기대비)',
                 perf_vs_3m_ago VARCHAR(50) COMMENT '실적이슈(3개월전대비)',
-                perf_vs_consensus VARCHAR(50) COMMENT '실적이슈(예상실적대비)',
                 max_daily_fall_rate DECIMAL(10, 2) COMMENT '1일 최대 하락률',
                 FOREIGN KEY (code) REFERENCES companies (code) ON DELETE CASCADE,
                 UNIQUE KEY (code, date)
@@ -121,6 +120,9 @@ class StockManager:
                 # 컬럼명 변경 (기존 코드와의 호환성)
                 stocks.rename(columns={'Symbol': 'Code', 'DividendYield': 'DivRate'}, inplace=True)
                 
+                # 우선주 제외 (종목코드가 '0'으로 끝나는 종목만 선택)
+                stocks = stocks[stocks['Code'].str.endswith('0')]
+
                 # fdr에서 가져온 데이터에 'IndustPER'이 없으면 None으로 채움 (fnguide에서 채워짐)
                 if 'IndustPER' not in stocks.columns:
                     stocks['IndustPER'] = None
@@ -169,7 +171,7 @@ class StockManager:
                         row.get('ROE'), row.get('DivRate'), row.get('BPS'),
                         row.get('PER_pred'), row.get('PBR_pred'), row.get('EPS_pred'),
                         row.get('ROE_pred'), row.get('BPS_pred'),
-                        row.get('perf_yoy'), row.get('perf_vs_3m_ago'), row.get('perf_vs_consensus')
+                        row.get('perf_yoy'), row.get('perf_vs_3m_ago')
                     ))
                 
                 if limit and len(companies_to_upsert) >= limit:
@@ -192,15 +194,15 @@ class StockManager:
                 INSERT INTO daily_financials (
                     code, date, marcap, stocks, pbr, per, indust_per, eps, roe, div_yield, bps, 
                     per_pred, pbr_pred, eps_pred, roe_pred, bps_pred,
-                    perf_yoy, perf_vs_3m_ago, perf_vs_consensus
+                    perf_yoy, perf_vs_3m_ago
                 ) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON DUPLICATE KEY UPDATE
                     marcap = VALUES(marcap), stocks = VALUES(stocks), pbr = VALUES(pbr), per = VALUES(per),
                     indust_per = VALUES(indust_per), eps = VALUES(eps), roe = VALUES(roe), div_yield = VALUES(div_yield),
                     bps = VALUES(bps), per_pred = VALUES(per_pred), pbr_pred = VALUES(pbr_pred),
                     eps_pred = VALUES(eps_pred), roe_pred = VALUES(roe_pred), bps_pred = VALUES(bps_pred),
-                    perf_yoy = VALUES(perf_yoy), perf_vs_3m_ago = VALUES(perf_vs_3m_ago), perf_vs_consensus = VALUES(perf_vs_consensus);
+                    perf_yoy = VALUES(perf_yoy), perf_vs_3m_ago = VALUES(perf_vs_3m_ago);
                 """
                 self.db_access.execute_many_query(query_financials, financials_to_insert)
                 logging.info(f"성공적으로 {len(financials_to_insert)}개 종목의 일일 재무 정보를 저장했습니다.")
@@ -418,7 +420,7 @@ class StockManager:
             df_list = pd.read_html(StringIO(str(issue_table)))
             if not df_list: return
             df_issue = df_list[0]
-            keywords = {'perf_yoy': '전년동기대비', 'perf_vs_3m_ago': '3개월전', 'perf_vs_consensus': '예상실적대비'}
+            keywords = {'perf_yoy': '전년동기대비', 'perf_vs_3m_ago': '3개월전'}
             for key, keyword in keywords.items():
                 for col in df_issue.columns:
                     if keyword in str(col):
