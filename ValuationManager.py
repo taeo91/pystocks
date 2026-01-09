@@ -195,6 +195,8 @@ class ValuationManager:
         ]}
         
         for key, value in data.items():
+            if key in ['code', 'name']:
+                continue
             if isinstance(value, (int, float)):
                 continue
             try:
@@ -222,21 +224,27 @@ class ValuationManager:
 
     def _calculate_fair_value_rim(self, data):
         """RIM 모델 기반 적정주가를 계산합니다."""
-        if data.get('roe_pred', 0) >= 0 and data.get('bps_pred', 0) > 0:
-            excess_profit = (data['roe_pred'] / 100 - self.REQUIRED_ROE / 100) * data['bps_pred']
-            return data['bps_pred'] + (excess_profit / (self.REQUIRED_ROE / 100))
+        roe_pred = data.get('roe_pred')
+        bps_pred = data.get('bps_pred')
+        if roe_pred is not None and bps_pred is not None and roe_pred >= 0 and bps_pred > 0:
+            excess_profit = (roe_pred / 100 - self.REQUIRED_ROE / 100) * bps_pred
+            return bps_pred + (excess_profit / (self.REQUIRED_ROE / 100))
         return 0
 
     def _calculate_fair_value_per(self, data):
         """업종 PER 모델 기반 적정주가를 계산합니다."""
-        if data.get('indust_per', 0) > 0 and data.get('eps_pred', 0) > 0:
-            return data['eps_pred'] * data['indust_per']
+        indust_per = data.get('indust_per')
+        eps_pred = data.get('eps_pred')
+        if indust_per is not None and eps_pred is not None and indust_per > 0 and eps_pred > 0:
+            return eps_pred * indust_per
         return 0
 
     def _calculate_fair_value_pegr(self, data, eps_growth_rate):
         """PEGR 모델 기반 적정주가를 계산합니다."""
-        if data.get('eps_pred', 0) > 0 and self.PEGR_MIN_GROWTH < eps_growth_rate < self.PEGR_MAX_GROWTH:
-            return eps_growth_rate * data['eps_pred']
+        eps_pred = data.get('eps_pred')
+        if eps_pred is not None and eps_pred > 0 and \
+           eps_growth_rate is not None and self.PEGR_MIN_GROWTH < eps_growth_rate < self.PEGR_MAX_GROWTH:
+            return eps_growth_rate * eps_pred
         return 0
 
     def _blend_and_apply_margin(self, fv_rim, fv_per, fv_pegr):
@@ -365,6 +373,13 @@ class ValuationManager:
 
                 # 컬럼 인덱스 매핑
                 col_map = {col: idx + 1 for idx, col in enumerate(df.columns)}
+
+                # 0. Code 컬럼 텍스트 포맷 적용
+                if 'code' in col_map:
+                    code_col_idx = col_map['code']
+                    for row in range(2, worksheet.max_row + 1):
+                        cell = worksheet.cell(row=row, column=code_col_idx)
+                        cell.number_format = '@'
 
                 # 1. 숫자 포맷 적용 (천 단위 콤마, 소수점 제거)
                 for col_name in ['current_price', 'fair_value']:
