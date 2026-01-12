@@ -1,3 +1,6 @@
 *.xlsx
 *.log
 *.pyc
+__pycache__/*.pyc
+__pycache__/AppManager.cpython-310.pyc
+__pycache__/DBAccessManager.cpython-310.pyc
