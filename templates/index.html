@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #444;
+        }
+        #portfolio-table {
+            margin: 20px auto;
+            width: 95%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>My Stock Portfolio</h1>
+    <div id="portfolio-table"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/api/portfolio')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        document.getElementById('portfolio-table').innerHTML = '<p>No data to display.</p>';
+                        return;
+                    }
+
+                    let table = '<table>';
+                    // Create table headers
+                    table += '<thead><tr>';
+                    Object.keys(data[0]).forEach(key => {
+                        table += `<th>${key}</th>`;
+                    });
+                    table += '</tr></thead>';
+
+                    // Create table body
+                    table += '<tbody>';
+                    data.forEach(row => {
+                        table += '<tr>';
+                        Object.values(row).forEach(value => {
+                            // Handle null or undefined values
+                            let displayValue = (value === null || typeof value === 'undefined') ? '' : value;
+                             // Check if value is a number and format it
+                            if (typeof displayValue === 'number') {
+                                displayValue = parseFloat(displayValue.toFixed(2)).toLocaleString();
+                            }
+                            table += `<td>${displayValue}</td>`;
+                        });
+                        table += '</tr>';
+                    });
+                    table += '</tbody>';
+
+                    table += '</table>';
+                    document.getElementById('portfolio-table').innerHTML = table;
+                })
+                .catch(error => {
+                    console.error('Error fetching portfolio data:', error);
+                    document.getElementById('portfolio-table').innerHTML = '<p>Error loading data. Please try again later.</p>';
+                });
+        });
+    </script>
+
+</body>
+</html>
