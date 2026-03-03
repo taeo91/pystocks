@@ -4,6 +4,7 @@ import logging
 import os
 from dotenv import load_dotenv
 import datetime
+import re
 import FinanceDataReader as fdr
 import requests
 from bs4 import BeautifulSoup
@@ -27,15 +28,26 @@ class PortfolioManager:
             return "VARCHAR(255)"
 
     def get_tickers_from_excel(self, file_path):
-        sheet_name = '일일종가'
-        try:
-            df = pd.read_excel(file_path, sheet_name=sheet_name, header=0)
-            tickers = df.columns[1:-1].astype(str).tolist() # Exclude '날짜' and '메모'
-            logging.info(f"Extracted tickers from '{sheet_name}': {tickers}")
-            return tickers
-        except Exception as e:
-            logging.error(f"Error reading tickers from excel: {e}")
-            return []
+        if re.search(r'r\d+', file_path):
+            sheet_name = 'Portfolio'
+            try:
+                df = pd.read_excel(file_path, sheet_name=sheet_name, header=2, dtype={'코드': str}) # header is the 3rd row
+                tickers = df['코드'].dropna().apply(lambda x: x.zfill(6)).tolist()
+                logging.info(f"Extracted tickers from revision file '{sheet_name}': {tickers}")
+                return tickers
+            except Exception as e:
+                logging.error(f"Error reading tickers from revision excel: {e}")
+                return []
+        else:
+            sheet_name = '일일종가'
+            try:
+                df = pd.read_excel(file_path, sheet_name=sheet_name, header=0)
+                tickers = df.columns[1:-1].astype(str).tolist() # Exclude '날짜' and '메모'
+                logging.info(f"Extracted tickers from '{sheet_name}': {tickers}")
+                return tickers
+            except Exception as e:
+                logging.error(f"Error reading tickers from excel: {e}")
+                return []
 
     def fetch_and_save_etf_prices(self, tickers, start_date=None):
         if not start_date:
@@ -79,8 +91,13 @@ class PortfolioManager:
                 
                 insert_query = "INSERT INTO companies (code, name, market) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE name=VALUES(name), market=VALUES(market)"
                 self.db_manager.execute_query(insert_query, (ticker, stock_name, market))
-                company_id = self.db_manager.fetch_one("SELECT id FROM companies WHERE code = %s", (ticker,))[0]
-                logging.info(f"Inserted new company: {ticker} - {stock_name}")
+                company_id_result = self.db_manager.fetch_one("SELECT id FROM companies WHERE code = %s", (ticker,))
+                if company_id_result:
+                    company_id = company_id_result[0]
+                    logging.info(f"Inserted new company: {ticker} - {stock_name}")
+                else:
+                    logging.error(f"Failed to insert or retrieve company_id for {ticker}")
+                    continue
 
                 if market == 'ETF':
                     self.etf_manager.add_etf(ticker, stock_name)
@@ -228,12 +245,12 @@ class PortfolioManager:
 
         # Select and rename columns
         required_columns = {
-            '티커': 'ticker',
-            '종목명': 'stock_name',
-            '보유수량': 'quantity',
-            '평단가': 'avg_price',
-            '매입원금': 'purchase_amount',
-            '연중 최대하락폭(%)': 'mdd_percent'
+            '코드': 'ticker',
+            '종목': 'stock_name',
+            '보유량': 'quantity',
+            '평균단가': 'avg_price',
+            '투자금': 'purchase_amount',
+            '연중최대하락폭': 'mdd_percent'
         }
         
         try:
@@ -425,7 +442,7 @@ if __name__ == '__main__':
         portfolio_manager = PortfolioManager(db_manager, etf_manager)
         
         # First, fetch prices which also creates the company entries
-        tickers = portfolio_manager.get_tickers_from_excel('reports/portfolio_daily_r9_py.xlsx')
+        tickers = portfolio_manager.get_tickers_from_excel('reports/portfolio_r14.xlsx')
         if tickers:
             portfolio_manager.fetch_and_save_etf_prices(tickers)
         
