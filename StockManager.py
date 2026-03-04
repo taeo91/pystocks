@@ -280,6 +280,56 @@ class StockManager:
         except Exception as e:
             logging.error(f"FDR 및 FnGuide에서 회사 정보를 저장하는 중 오류 발생: {e}")
 
+    def save_daily_prices(self, start_date=None, limit=None):
+        """FinanceDataReader를 사용하여 종목의 일별 시세를 가져와 DB에 저장"""
+        try:
+            logging.info("일별 시세 저장을 시작합니다...")
+            
+            # companies 테이블에서 종목 코드 가져오기 (ETF 제외)
+            query = "SELECT id, code FROM companies WHERE market != 'ETF'"
+            if limit:
+                query += f" LIMIT {limit}"
+            
+            companies = self.db_access.fetch_all(query)
+            if not companies:
+                logging.warning("시세를 저장할 종목이 없습니다.")
+                return
+
+            logging.info(f"총 {len(companies)}개 종목의 시세를 업데이트합니다.")
+
+            if not start_date:
+                start_date = (datetime.date.today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
+
+            for company_id, code in companies:
+                try:
+                    # 마지막 저장된 날짜 확인
+                    last_date_query = "SELECT MAX(trade_date) FROM prices WHERE company_id = %s"
+                    last_date_row = self.db_access.fetch_one(last_date_query, (company_id,))
+                    
+                    fetch_start_date = start_date
+                    if last_date_row and last_date_row[0]:
+                        fetch_start_date = (last_date_row[0] + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                    
+                    if fetch_start_date > datetime.date.today().strftime('%Y-%m-%d'):
+                        continue
+
+                    df = fdr.DataReader(code, start=fetch_start_date)
+                    
+                    if df is None or df.empty:
+                        continue
+                    
+                    prices_to_insert = [(company_id, date.strftime('%Y-%m-%d'), float(row['Open']), float(row['High']), float(row['Low']), float(row['Close']), int(row['Volume'])) for date, row in df.iterrows()]
+                    
+                    if prices_to_insert:
+                        query = "INSERT INTO prices (company_id, trade_date, open_price, high_price, low_price, close_price, volume) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE open_price = VALUES(open_price), high_price = VALUES(high_price), low_price = VALUES(low_price), close_price = VALUES(close_price), volume = VALUES(volume)"
+                        self.db_access.execute_many_query(query, prices_to_insert)
+                        logging.info(f"[{code}] {len(prices_to_insert)}일치 시세 저장 완료.")
+                except Exception as e:
+                    logging.error(f"[{code}] 시세 저장 중 오류: {e}")
+            logging.info("일별 시세 저장 작업 완료.")
+        except Exception as e:
+            logging.error(f"save_daily_prices 실행 중 오류 발생: {e}")
+
     def update_risk_metrics(self, limit=None):
         """DB에 저장된 주가 정보를 바탕으로 1일 최대 하락률을 계산하여 daily_financials에 업데이트"""
         try:

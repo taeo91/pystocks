@@ -12,26 +12,144 @@ class ETFManager:
         self.db_manager = db_manager
 
     def create_etf_info_table(self):
-        """'etf_info' 테이블을 생성합니다."""
+        """'etf_info' 테이블을 생성합니다. (Excel 파일 컬럼 기반)"""
         query = """
         CREATE TABLE IF NOT EXISTS etf_info (
             id INT AUTO_INCREMENT PRIMARY KEY,
             code VARCHAR(20) NOT NULL UNIQUE COMMENT '종목코드',
             name VARCHAR(255) COMMENT '종목명',
-            market_sum BIGINT COMMENT '시가총액(억)',
+            close_price DECIMAL(15, 2) COMMENT '종가',
             nav DECIMAL(15, 2) COMMENT 'NAV',
-            three_month_earn_rate DECIMAL(10, 2) COMMENT '3개월 수익률(%)',
-            total_expense_ratio DECIMAL(10, 4) COMMENT '총보수(%)',
-            dividend_yield DECIMAL(10, 2) COMMENT '분배율(%)'
-        ) COMMENT 'ETF 상세 정보';
+            market_sum BIGINT COMMENT '시가총액(억)',
+            three_month_earn_rate DECIMAL(10, 2) COMMENT '3개월 수익률(%)'
+        ) COMMENT 'ETF 기본 정보 (Excel 기반)';
         """
         try:
             self.db_manager.execute_query(query)
-            logging.info("Table 'etf_info' created or already exists.")
+            logging.info("Table 'etf_info' created or already exists based on Excel schema.")
             return True
         except Exception as e:
             logging.error(f"Error creating 'etf_info' table: {e}")
             return False
+
+    def save_etf_info(self):
+        """Excel 파일에서 ETF 정보를 읽어와 etf_info 테이블에 저장합니다."""
+        logging.info("Excel 파일 기반 ETF 정보 업데이트를 시작합니다...")
+        
+        try:
+            # .env에서 파일 이름과 가져올 종목 수 읽기
+            etf_filename = os.getenv('ETF_EXCEL_FILE', 'data_3515_20260305_ETF.xlsx')
+            etf_count_str = os.getenv('ETF_COUNT', '150')
+            limit = int(etf_count_str) if etf_count_str else 150
+            
+            excel_file_path = os.path.join('reports', etf_filename)
+
+            if not os.path.exists(excel_file_path):
+                logging.error(f"ETF 정보 파일 '{excel_file_path}'를 찾을 수 없습니다.")
+                return
+
+            logging.info(f"'{excel_file_path}' 파일에서 ETF 정보를 로드합니다.")
+            df = pd.read_excel(excel_file_path, dtype={'종목코드': str})
+            
+            # 컬럼 이름 매핑 (Excel -> DB)
+            column_mapping = {
+                '종목코드': 'code',
+                '종목명': 'name',
+                '종가': 'close_price',
+                'NAV': 'nav',
+                '시가총액': 'market_sum',
+                '3개월수익률': 'three_month_earn_rate'
+            }
+            df.rename(columns=column_mapping, inplace=True)
+
+            # 필요한 컬럼만 선택
+            required_cols = list(column_mapping.values())
+            df = df[required_cols]
+
+            # 시가총액 기준으로 상위 N개 필터링
+            if 'market_sum' in df.columns:
+                df = df.sort_values(by='market_sum', ascending=False).head(limit)
+                logging.info(f"시가총액 상위 {len(df)}개 ETF를 선택했습니다.")
+            else:
+                logging.warning("'시가총액' 컬럼이 없어 정렬하지 못했습니다. 파일의 순서대로 상위 {limit}개를 가져옵니다.")
+                df = df.head(limit)
+
+            # '종목코드' 6자리로 포맷팅
+            if 'code' in df.columns:
+                df['code'] = df['code'].str.zfill(6)
+
+            # DB에 저장할 데이터 준비
+            # NaN 값을 None으로 변환
+            df = df.where(pd.notna(df), None)
+            etfs_to_insert = [tuple(row) for row in df.to_numpy()]
+
+            if etfs_to_insert:
+                query = """
+                INSERT INTO etf_info (code, name, close_price, nav, market_sum, three_month_earn_rate)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON DUPLICATE KEY UPDATE
+                    name = VALUES(name),
+                    close_price = VALUES(close_price),
+                    nav = VALUES(nav),
+                    market_sum = VALUES(market_sum),
+                    three_month_earn_rate = VALUES(three_month_earn_rate)
+                """
+                self.db_manager.execute_many_query(query, etfs_to_insert)
+                logging.info(f"성공적으로 {len(etfs_to_insert)}개의 ETF 정보를 저장/업데이트했습니다.")
+            else:
+                logging.warning("저장할 ETF 정보가 없습니다.")
+
+        except Exception as e:
+            logging.error(f"Excel에서 ETF 정보 저장 중 오류 발생: {e}")
+
+    def save_daily_prices(self, start_date=None, limit=None):
+        """etf_info 테이블에 있는 ETF 종목의 일별 시세를 가져와 etf_prices 테이블에 저장"""
+        try:
+            logging.info("ETF 일별 시세 저장을 시작합니다...")
+            
+            query = "SELECT id, code FROM etf_info"
+            if limit:
+                query += f" LIMIT {limit}"
+            
+            etfs = self.db_manager.fetch_all(query)
+            if not etfs:
+                logging.warning("시세를 저장할 ETF 종목이 없습니다.")
+                return
+
+            logging.info(f"총 {len(etfs)}개 ETF의 시세를 업데이트합니다.")
+
+            if not start_date:
+                start_date = (datetime.date.today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
+
+            for etf_id, code in etfs:
+                try:
+                    # 마지막 저장된 날짜 확인
+                    last_date_query = "SELECT MAX(trade_date) FROM etf_prices WHERE etf_id = %s"
+                    last_date_row = self.db_manager.fetch_one(last_date_query, (etf_id,))
+                    
+                    fetch_start_date = start_date
+                    if last_date_row and last_date_row[0]:
+                        fetch_start_date = (last_date_row[0] + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+                    
+                    if fetch_start_date > datetime.date.today().strftime('%Y-%m-%d'):
+                        continue
+
+                    df = fdr.DataReader(code, start=fetch_start_date)
+                    
+                    if df is None or df.empty:
+                        continue
+                    
+                    prices_to_insert = [(etf_id, date.strftime('%Y-%m-%d'), float(row['Open']), float(row['High']), float(row['Low']), float(row['Close']), int(row['Volume'])) for date, row in df.iterrows()]
+                    
+                    if prices_to_insert:
+                        query = "INSERT INTO etf_prices (etf_id, trade_date, open_price, high_price, low_price, close_price, volume) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE open_price = VALUES(open_price), high_price = VALUES(high_price), low_price = VALUES(low_price), close_price = VALUES(close_price), volume = VALUES(volume)"
+                        self.db_manager.execute_many_query(query, prices_to_insert)
+                        logging.info(f"[{code}] ETF {len(prices_to_insert)}일치 시세 저장 완료.")
+                except Exception as e:
+                    logging.error(f"[{code}] ETF 시세 저장 중 오류: {e}")
+            logging.info("ETF 일별 시세 저장 작업 완료.")
+        except Exception as e:
+            logging.error(f"ETF save_daily_prices 실행 중 오류 발생: {e}")
 
     def update_etf_names_from_naver(self):
         """
