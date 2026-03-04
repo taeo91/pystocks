@@ -134,6 +134,7 @@ class StockManager:
 
     def save_stock_info(self, limit=None):
         """FinanceDataReader와 FnGuide를 사용하여 종목 정보를 가져와 DB에 저장"""
+        stocks = None
         try:
             logging.info("FinanceDataReader에서 전체 종목 목록을 가져옵니다...")
             try:
@@ -160,8 +161,49 @@ class StockManager:
 
             except Exception as e:
                 logging.error(f"FinanceDataReader에서 종목 목록을 가져오는 중 오류 발생: {e}")
-                return
+                
+                fallback_filename = os.getenv('FALLBACK_STOCK_EXCEL_FILE', 'data_1340_20260304.xlsx')
+                excel_file = os.path.join('reports', fallback_filename)
+                logging.info(f"대체 엑셀 파일 '{excel_file}'에서 데이터를 로드합니다.")
+                try:
+                    if os.path.exists(excel_file):
+                        stocks_excel = pd.read_excel(excel_file, dtype={'종목코드': str})
+                        
+                        column_mapping = {
+                            '종목코드': 'Code',
+                            '종목명': 'Name',
+                            '시장구분': 'Market',
+                        }
+                        stocks_excel.rename(columns=column_mapping, inplace=True)
 
+                        if 'Code' not in stocks_excel.columns:
+                            raise ValueError("엑셀 파일에 '종목코드' 컬럼이 없습니다.")
+                        
+                        stocks_excel['Code'] = stocks_excel['Code'].str.zfill(6)
+
+                        if 'Market' in stocks_excel.columns:
+                            stocks_excel = stocks_excel[stocks_excel['Market'].isin(['KOSPI', 'KOSDAQ'])].copy()
+                        
+                        stocks_excel = stocks_excel[stocks_excel['Code'].str.endswith('0')]
+
+                        if 'Marcap' in stocks_excel.columns:
+                            stocks = stocks_excel.sort_values(by='Marcap', ascending=False).reset_index(drop=True)
+                        else:
+                            stocks = stocks_excel.reset_index(drop=True)
+
+                        if 'IndustPER' not in stocks.columns:
+                            stocks['IndustPER'] = None
+
+                        logging.info(f"엑셀 파일에서 {len(stocks)}개 종목 정보를 가져왔습니다.")
+                    else:
+                        logging.error(f"대체 엑셀 파일 '{excel_file}'을 찾을 수 없습니다.")
+                except Exception as excel_e:
+                    logging.error(f"엑셀 파일 로딩 중 오류 발생: {excel_e}")
+
+            if stocks is None:
+                logging.error("종목 정보를 가져오지 못했습니다. 작업을 중단합니다.")
+                return
+                
             # 설정된 개수만큼만 자르기 (상위 종목만 검토하여 불필요한 스크래핑 방지)
             if limit:
                 stocks = stocks.head(limit)
@@ -320,6 +362,11 @@ class StockManager:
             soup = BeautifulSoup(response.text, 'html.parser')
             data = {}
 
+            # 시가총액, 상장주식수 스크래핑 (corp_group1)
+            # Marcap은 '조/억원' 단위를 파싱하는 별도 헬퍼 사용
+            self._extract_marcap_value(soup, '#corp_group1 > dl > dd', data, 'Marcap')
+            self._extract_numeric_value(soup, '#corp_group1 > dl:nth-child(2) > dd', data, 'Stocks')
+
             summary_mapping = [
                 ('div.corp_group2 > dl:nth-of-type(3) > dd', 'IndustPER'),
                 ('div.corp_group2 > dl:nth-of-type(5) > dd', 'DivRate')
@@ -347,6 +394,32 @@ class StockManager:
             return data
         except Exception:
             return {}
+
+    def _extract_marcap_value(self, soup, selector, data_dict, key):
+        """FnGuide의 '조/억원' 단위 시가총액 텍스트를 파싱하여 숫자(KRW 단위)로 변환"""
+        try:
+            element = soup.select_one(selector)
+            if element:
+                text = element.text.strip().replace(',', '')
+                total_hm_value = 0  # hundred-million (억)
+                if '조' in text:
+                    parts = text.split('조')
+                    if parts[0]:
+                        total_hm_value += int(parts[0]) * 10000  # 1조 = 10000억
+                    if len(parts) > 1 and parts[1] and '억원' in parts[1]:
+                        hm_part_str = parts[1].replace('억원', '').strip()
+                        if hm_part_str:
+                            total_hm_value += int(hm_part_str)
+                elif '억원' in text:
+                    hm_part_str = text.replace('억원', '').strip()
+                    if hm_part_str:
+                        total_hm_value += int(hm_part_str)
+                
+                if total_hm_value > 0:
+                    # KRW 단위로 변환하여 저장 (FDR과 일관성 유지)
+                    data_dict[key] = total_hm_value * 100_000_000
+        except Exception:
+            data_dict[key] = None
 
     def _extract_from_table(self, df, data_dict, data_key, row_name, col_index, code):
         try:
