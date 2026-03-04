@@ -129,6 +129,8 @@ class StockManager:
 
                 stocks = stocks.sort_values(by='Marcap', ascending=False).reset_index(drop=True)
                 logging.info(f"FDR에서 {len(stocks)}개 종목 정보를 가져왔습니다.")
+                logging.info("FDR에서 가져온 데이터 샘플 (상위 5개):")
+                logging.info(stocks.head().to_string())
 
             except Exception as e:
                 logging.error(f"FinanceDataReader에서 종목 목록을 가져오는 중 오류 발생: {e}")
@@ -150,7 +152,7 @@ class StockManager:
                 # FDR 데이터와 스크래핑 데이터 병합
                 if fnguide_financials:
                     for key, fnguide_val in fnguide_financials.items():
-                        if fnguide_val is not None:
+                        if pd.notna(fnguide_val):
                             row[key] = fnguide_val
                 
                 # 조건 필터링: PER > 0 이고, EPS >= 0 인 종목만 선택
