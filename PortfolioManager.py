@@ -44,7 +44,8 @@ class PortfolioManager:
 
         placeholders = ', '.join(['%s'] * len(tickers))
         query = f"SELECT code FROM companies WHERE code IN ({placeholders})"
-        existing_tickers = {row[0] for row in self.db_manager.fetch_all(query, tickers)}
+        existing_rows = self.db_manager.fetch_all(query, tickers)
+        existing_tickers = {row[0] for row in existing_rows} if existing_rows else set()
         new_tickers = [t for t in tickers if t not in existing_tickers]
 
         if new_tickers:
@@ -60,7 +61,8 @@ class PortfolioManager:
                     self.etf_manager.add_etf(ticker, name_lookup.get(ticker, ticker))
 
         query = f"SELECT code, id FROM companies WHERE code IN ({placeholders})"
-        return {code: id for code, id in self.db_manager.fetch_all(query, tickers)}
+        company_rows = self.db_manager.fetch_all(query, tickers)
+        return {code: id for code, id in company_rows} if company_rows else {}
 
     def _create_table_from_dataframe(self, table_name, df, add_auto_increment_id=True):
         """Helper to generate and execute a CREATE TABLE query from a DataFrame."""
@@ -87,8 +89,16 @@ class PortfolioManager:
             code_col_idx = header.index('코드') + 1
             price_col_idx = header.index('현재가') + 1
 
-            query = f"SELECT c.code, p.close_price FROM prices p JOIN companies c ON p.company_id = c.id WHERE p.trade_date = %s AND c.code IN ({placeholders})"
-            prices_for_date = {code: price for code, price in self.db_manager.fetch_all(query, [latest_db_date] + tickers)}
+            # Get prices from both tables
+            query_stock = f"SELECT c.code, p.close_price FROM prices p JOIN companies c ON p.company_id = c.id WHERE p.trade_date = %s AND c.code IN ({placeholders}) AND c.market != 'ETF'"
+            stock_prices_raw = self.db_manager.fetch_all(query_stock, [latest_db_date] + tickers)
+            prices_for_date = {code: price for code, price in stock_prices_raw} if stock_prices_raw else {}
+
+            query_etf = f"SELECT ei.code, p.close_price FROM etf_prices p JOIN etf_info ei ON p.etf_id = ei.id WHERE p.trade_date = %s AND ei.code IN ({placeholders})"
+            etf_prices_raw = self.db_manager.fetch_all(query_etf, [latest_db_date] + tickers)
+            etf_prices = {code: price for code, price in etf_prices_raw} if etf_prices_raw else {}
+
+            prices_for_date.update(etf_prices)
 
             blue_font = Font(color="0000FF")
             for row_idx in range(4, sheet.max_row + 1): # Data starts from 4th row
@@ -120,42 +130,64 @@ class PortfolioManager:
             logging.error(f"Error reading tickers from excel file {file_path}: {e}")
             return []
 
-    def fetch_and_save_etf_prices(self, tickers, start_date=None):
-        if not start_date:
-            start_date = (datetime.date.today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
+    def fetch_and_save_prices(self, tickers, market_type='etf', start_date=None):
+        default_start_date = (datetime.date.today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
+        fetch_start_date_overall = start_date if start_date else default_start_date
+
+        is_etf = market_type.lower() == 'etf'
+        table_name = 'etf_prices' if is_etf else 'prices'
+        id_column = 'etf_id' if is_etf else 'company_id'
 
         name_lookup, market_lookup = self._get_market_lookup_tables()
-        company_id_map = self._get_or_create_company_ids(tickers, name_lookup, market_lookup)
-        
-        company_ids = list(company_id_map.values())
-        last_trade_dates = {}
-        if company_ids:
-            placeholders = ', '.join(['%s'] * len(company_ids))
-            query = f"SELECT company_id, MAX(trade_date) FROM prices WHERE company_id IN ({placeholders}) GROUP BY company_id"
-            last_dates_raw = self.db_manager.fetch_all(query, company_ids)
-            last_trade_dates = {cid: date for cid, date in last_dates_raw}
 
-        for ticker in tickers:
-            company_id = company_id_map.get(ticker)
-            if not company_id:
+        # 1. Filter tickers for the given market type
+        if is_etf:
+            target_tickers = [t for t in tickers if market_lookup.get(t) == 'ETF']
+        else: # For 'stock', get everything that is not an ETF.
+            target_tickers = [t for t in tickers if market_lookup.get(t) != 'ETF']
+
+        if not target_tickers:
+            logging.info(f"No tickers to process for market type '{market_type}'.")
+            return
+
+        # 2. Ensure all tickers exist in DB and get their respective IDs
+        self._get_or_create_company_ids(target_tickers, name_lookup, market_lookup)
+
+        placeholders = ', '.join(['%s'] * len(target_tickers))
+        id_map_query = f"SELECT code, id FROM {'etf_info' if is_etf else 'companies'} WHERE code IN ({placeholders})"
+        id_map_rows = self.db_manager.fetch_all(id_map_query, target_tickers)
+        id_map = {code: id for code, id in id_map_rows} if id_map_rows else {}
+
+        # 3. Find the last trade date for each ID to fetch only new data
+        db_ids = list(id_map.values())
+        last_trade_dates = {}
+        if db_ids:
+            placeholders_ids = ', '.join(['%s'] * len(db_ids))
+            query = f"SELECT {id_column}, MAX(trade_date) FROM {table_name} WHERE {id_column} IN ({placeholders_ids}) GROUP BY {id_column}"
+            last_dates_raw = self.db_manager.fetch_all(query, db_ids)
+            last_trade_dates = {cid: date for cid, date in last_dates_raw} if last_dates_raw else {}
+
+        # 4. Fetch and save price data for each ticker
+        for ticker in target_tickers:
+            db_id = id_map.get(ticker)
+            if not db_id:
                 logging.warning(f"Could not process ticker {ticker}, no company_id found. Skipping.")
                 continue
 
-            last_date = last_trade_dates.get(company_id)
-            fetch_start_date = (last_date + datetime.timedelta(days=1)).strftime('%Y-%m-%d') if last_date else start_date
+            last_date = last_trade_dates.get(db_id)
+            fetch_start_date = (last_date + datetime.timedelta(days=1)).strftime('%Y-%m-%d') if last_date else fetch_start_date_overall
             
             logging.info(f"[{ticker}] Fetching price data from {fetch_start_date}")
             try:
                 df = fdr.DataReader(ticker, start=fetch_start_date)
                 if df.empty:
-                    logging.info(f"[{ticker}] No new price data found.")
-                    continue
-
-                data_to_insert = [(company_id, date.strftime('%Y-%m-%d'), row['Open'], row['High'], row['Low'], row['Close'], row['Volume']) for date, row in df.iterrows()]
+                    data_to_insert = [(db_id, date.strftime('%Y-%m-%d'), row['Open'], row['High'], row['Low'], row['Close'], row['Volume']) for date, row in df.iterrows()]
                 if data_to_insert:
-                    price_query = "INSERT INTO prices (company_id, trade_date, open_price, high_price, low_price, close_price, volume) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE open_price=VALUES(open_price), high_price=VALUES(high_price), low_price=VALUES(low_price), close_price=VALUES(close_price), volume=VALUES(volume)"
+                    price_query = f"INSERT INTO {table_name} ({id_column}, trade_date, open_price, high_price, low_price, close_price, volume) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE open_price=VALUES(open_price), high_price=VALUES(high_price), low_price=VALUES(low_price), close_price=VALUES(close_price), volume=VALUES(volume)"
                     self.db_manager.execute_many_query(price_query, data_to_insert)
-                    logging.info(f"[{ticker}] Inserted/updated {len(data_to_insert)} price records.")
+                    logging.info(f"[{ticker}] Inserted/updated {len(data_to_insert)} price records into {table_name}.")
+                else:
+                    logging.info(f"[{ticker}] No new price data found.")
             except Exception as e:
                 logging.error(f"Error fetching or saving price data for {ticker}: {e}")
 
@@ -218,7 +250,9 @@ class PortfolioManager:
         ticker_list = holdings_df['ticker'].dropna().tolist()
         if ticker_list:
             placeholders = ', '.join(['%s'] * len(ticker_list))
-            query = f"""
+            
+            # Query for stock prices
+            query_stocks = f"""
                 SELECT c.code, p.close_price FROM prices p
                 JOIN (
                     SELECT company_id, MAX(trade_date) as max_date FROM prices
@@ -227,7 +261,24 @@ class PortfolioManager:
                 ) latest ON p.company_id = latest.company_id AND p.trade_date = latest.max_date
                 JOIN companies c ON p.company_id = c.id
             """
-            price_map = {code: price for code, price in self.db_manager.fetch_all(query, ticker_list)}
+            stock_prices_raw = self.db_manager.fetch_all(query_stocks, ticker_list)
+            price_map = {code: price for code, price in stock_prices_raw} if stock_prices_raw else {}
+            
+            # Query for ETF prices
+            query_etfs = f"""
+                SELECT ei.code, p.close_price FROM etf_prices p
+                JOIN (
+                    SELECT etf_id, MAX(trade_date) as max_date FROM etf_prices
+                    WHERE etf_id IN (SELECT id FROM etf_info WHERE code IN ({placeholders}))
+                    GROUP BY etf_id
+                ) latest ON p.etf_id = latest.etf_id AND p.trade_date = latest.max_date
+                JOIN etf_info ei ON p.etf_id = ei.id
+            """
+            etf_prices_raw = self.db_manager.fetch_all(query_etfs, ticker_list)
+            etf_price_map = {code: price for code, price in etf_prices_raw} if etf_prices_raw else {}
+
+            price_map.update(etf_price_map)
+
             holdings_df['close_price'] = holdings_df['ticker'].map(price_map)
         else:
             holdings_df['close_price'] = None
@@ -252,10 +303,24 @@ class PortfolioManager:
                 return
 
             placeholders = ', '.join(['%s'] * len(all_tickers))
-            query = f"SELECT MAX(p.trade_date) FROM prices p JOIN companies c ON p.company_id = c.id WHERE c.code IN ({placeholders})"
-            result = self.db_manager.fetch_one(query, all_tickers)
-            latest_db_date = result[0] if result and result[0] else None
+            
+            # Get latest date from both tables
+            query_stock = f"SELECT MAX(p.trade_date) FROM prices p JOIN companies c ON p.company_id = c.id WHERE c.code IN ({placeholders})"
+            result_stock = self.db_manager.fetch_one(query_stock, all_tickers)
+            latest_stock_date = result_stock[0] if result_stock and result_stock[0] else None
 
+            query_etf = f"SELECT MAX(p.trade_date) FROM etf_prices p JOIN etf_info ei ON p.etf_id = ei.id WHERE ei.code IN ({placeholders})"
+            result_etf = self.db_manager.fetch_one(query_etf, all_tickers)
+            latest_etf_date = result_etf[0] if result_etf and result_etf[0] else None
+
+            latest_db_date = None
+            if latest_stock_date and latest_etf_date:
+                latest_db_date = max(latest_stock_date, latest_etf_date)
+            elif latest_stock_date:
+                latest_db_date = latest_stock_date
+            else:
+                latest_db_date = latest_etf_date
+            
             if not latest_db_date:
                 logging.warning("No price data in DB for any tickers. Aborting.")
                 return
@@ -304,7 +369,8 @@ if __name__ == '__main__':
 
             if tickers:
                 logging.info("Step 2: Fetching latest prices and saving to DB...")
-                portfolio_manager.fetch_and_save_etf_prices(tickers)
+                portfolio_manager.fetch_and_save_prices(tickers, market_type='etf')
+                portfolio_manager.fetch_and_save_prices(tickers, market_type='stock')
 
                 logging.info("Step 3: Updating Excel file with latest prices from DB...")
                 portfolio_manager.update_portfolio_excel_with_prices(portfolio_file_path)

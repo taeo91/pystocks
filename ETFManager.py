@@ -22,8 +22,7 @@ class ETFManager:
             nav DECIMAL(15, 2) COMMENT 'NAV',
             three_month_earn_rate DECIMAL(10, 2) COMMENT '3개월 수익률(%)',
             total_expense_ratio DECIMAL(10, 4) COMMENT '총보수(%)',
-            dividend_yield DECIMAL(10, 2) COMMENT '분배율(%)',
-            FOREIGN KEY (code) REFERENCES companies (code) ON DELETE CASCADE
+            dividend_yield DECIMAL(10, 2) COMMENT '분배율(%)'
         ) COMMENT 'ETF 상세 정보';
         """
         try:

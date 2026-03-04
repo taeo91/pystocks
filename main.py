@@ -45,35 +45,45 @@ if __name__ == "__main__":
         stock_manager = StockManager(db_access)
         valuation_manager = ValuationManager(db_access)
 
-        # 1. ETF 데이터 업데이트
-        logging.info("[1/4] ETF 데이터 업데이트 시작...")
+        # 1. 데이터베이스 테이블 생성 (순서 중요)
+        logging.info("[1/6] 데이터베이스 테이블 생성 시작...")
         etf_manager.create_etf_info_table()
+        if not stock_manager.create_tables():
+            logging.error("주식 관련 테이블 생성에 실패하여 스크립트를 중단합니다.")
+            exit()
+        valuation_manager.create_valuation_table()
+        logging.info("[1/6] 데이터베이스 테이블 생성 완료.")
+
+        # 2. 주식 기본 정보 및 재무 데이터 저장 (KOSPI, KOSDAQ)
+        logging.info("[2/6] 주식 기본 정보 및 재무 데이터 업데이트 시작...")
+        stock_manager.save_stock_info(limit=limit)
+        logging.info("[2/6] 주식 기본 정보 및 재무 데이터 업데이트 완료.")
+
+        # 3. 포트폴리오 종목 가격 정보 업데이트 (이 과정에서 ETF가 companies 테이블에 추가됨)
+        logging.info("[3/6] 포트폴리오 종목 가격 정보 업데이트 시작...")
+        start_date_str = os.getenv('PRICE_FETCH_START_DATE')
         tickers = portfolio_manager.get_tickers_from_excel(portfolio_file_path)
         if tickers:
-            portfolio_manager.fetch_and_save_etf_prices(tickers)
+            portfolio_manager.fetch_and_save_prices(tickers, market_type='etf', start_date=start_date_str)
+            portfolio_manager.fetch_and_save_prices(tickers, market_type='stock', start_date=start_date_str)
+        logging.info("[3/6] 포트폴리오 종목 가격 정보 업데이트 완료.")
+
+        # 4. ETF 상세 정보 및 주식 리스크 지표 업데이트
+        logging.info("[4/6] ETF 상세 정보 및 주식 리스크 지표 업데이트 시작...")
         etf_manager.update_etf_names_from_naver()
         etf_manager.update_etf_details()
-        logging.info("[1/4] ETF 데이터 업데이트 완료.")
+        stock_manager.update_risk_metrics(limit=limit)
+        logging.info("[4/6] ETF 상세 정보 및 주식 리스크 지표 업데이트 완료.")
 
-        # 2. StockManager 실행: 종목 정보, 재무 데이터, 주가 정보, 기술적 지표 업데이트
-        logging.info("[2/4] 주식 데이터(정보, 재무, 시세) 통합 업데이트 시작...")
-        if stock_manager.create_tables():
-            stock_manager.save_stock_info(limit=limit)
-            
-            start_date_str = os.getenv('PRICE_FETCH_START_DATE')
-            stock_manager.save_daily_prices(start_date=start_date_str, limit=limit)
-            stock_manager.update_risk_metrics(limit=limit)
-        logging.info("[2/4] 주식 데이터 통합 업데이트 완료.")
-
-        # 3. ValuationManager 실행: 가치 평가
-        logging.info("[3/4] 가치 평가 계산 및 Excel 파일 저장 시작...")
+        # 5. ValuationManager 실행: 가치 평가
+        logging.info("[5/6] 가치 평가 계산 및 Excel 파일 저장 시작...")
         valuation_manager.calculate_and_save_valuations(limit=limit)
-        logging.info("[3/4] 가치 평가 계산 및 저장 완료.")
+        logging.info("[5/6] 가치 평가 계산 및 저장 완료.")
 
-        # 4. 포트폴리오 Excel 파일에 현재가 업데이트
-        logging.info("[4/4] 포트폴리오 Excel 파일 업데이트 시작...")
+        # 6. 포트폴리오 Excel 파일에 현재가 업데이트
+        logging.info("[6/6] 포트폴리오 Excel 파일 업데이트 시작...")
         portfolio_manager.update_portfolio_excel_with_prices(portfolio_file_path)
-        logging.info("[4/4] 포트폴리오 Excel 파일 업데이트 완료.")
+        logging.info("[6/6] 포트폴리오 Excel 파일 업데이트 완료.")
         
         logging.info("="*50)
         logging.info("모든 작업 완료: %s", time.ctime())

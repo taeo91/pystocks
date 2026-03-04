@@ -24,8 +24,8 @@ class StockManager:
         self.db_access = db_access
 
     def create_tables(self):
-        """주식 관련 테이블(companies, daily_financials, prices)을 생성"""
-        if self._create_companies_table() and self._create_daily_financials_table() and self._create_prices_table():
+        """주식 관련 테이블(companies, daily_financials, prices, etf_prices)을 생성"""
+        if self._create_companies_table() and self._create_daily_financials_table() and self._create_prices_table() and self._create_etf_prices_table():
             return True
         return False
 
@@ -108,14 +108,40 @@ class StockManager:
             logging.error(f"Error creating 'prices' table: {e}")
             return False
 
+    def _create_etf_prices_table(self):
+        """'etf_prices' 테이블 생성"""
+        try:
+            query = """
+            CREATE TABLE IF NOT EXISTS etf_prices (
+                price_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                etf_id INT NOT NULL COMMENT 'etf_info 테이블의 ID',
+                trade_date DATE NOT NULL,
+                open_price DECIMAL(15, 2) NULL,
+                high_price DECIMAL(15, 2) NULL,
+                low_price DECIMAL(15, 2) NULL,
+                close_price DECIMAL(15, 2) NULL,
+                volume BIGINT,
+                FOREIGN KEY (etf_id) REFERENCES etf_info(id) ON DELETE CASCADE,
+                UNIQUE KEY (etf_id, trade_date)
+            ) COMMENT 'ETF 일일 가격 정보';
+            """
+            self.db_access.execute_query(query)
+            logging.info("Table 'etf_prices' created or already exists.")
+            return True
+        except Exception as e:
+            logging.error(f"Error creating 'etf_prices' table: {e}")
+            return False
+
     def save_stock_info(self, limit=None):
         """FinanceDataReader와 FnGuide를 사용하여 종목 정보를 가져와 DB에 저장"""
         try:
             logging.info("FinanceDataReader에서 전체 종목 목록을 가져옵니다...")
             try:
-                stocks_kospi = fdr.StockListing('KOSPI')
-                stocks_kosdaq = fdr.StockListing('KOSDAQ')
-                stocks = pd.concat([stocks_kospi, stocks_kosdaq], ignore_index=True)
+                # KRX 전체(KOSPI, KOSDAQ, KONEX) 목록을 한번에 가져온 후 필터링
+                krx_list = fdr.StockListing('KRX')
+                
+                # KOSPI와 KOSDAQ 종목만 필터링
+                stocks = krx_list[krx_list['Market'].isin(['KOSPI', 'KOSDAQ'])].copy()
                 
                 # 컬럼명 변경 (기존 코드와의 호환성)
                 stocks.rename(columns={'Symbol': 'Code', 'DividendYield': 'DivRate'}, inplace=True)
@@ -211,76 +237,6 @@ class StockManager:
 
         except Exception as e:
             logging.error(f"FDR 및 FnGuide에서 회사 정보를 저장하는 중 오류 발생: {e}")
-
-    def save_daily_prices(self, start_date=None, limit=None):
-        """DB에 저장된 모든 회사에 대해 일별 주가 데이터를 가져와 저장"""
-        try:
-            cursor = self.db_access.connection.cursor(dictionary=True)
-            
-            company_query = "SELECT id, code FROM companies"
-            if limit:
-                company_query += f" LIMIT {limit}"
-            cursor.execute(company_query)
-            companies_to_fetch = cursor.fetchall()
-
-            if start_date is None:
-                start_date = (datetime.date.today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
-
-            logging.info(f"Fetching price data for {len(companies_to_fetch)} companies. Default start date: {start_date}.")
-
-            for company in companies_to_fetch:
-                company_id = company['id']
-                stock_code = company['code']
-                
-                last_date_query = "SELECT MAX(trade_date) FROM prices WHERE company_id = %s"
-                cursor.execute(last_date_query, (company_id,))
-                last_date_result = cursor.fetchone()
-                
-                fetch_start_date = start_date
-                if last_date_result and last_date_result.get('MAX(trade_date)'):
-                    fetch_start_date = last_date_result['MAX(trade_date)'] + datetime.timedelta(days=1)
-                    fetch_start_date = fetch_start_date.strftime('%Y-%m-%d')
-                
-                logging.info(f"[{stock_code}] Fetching price data from {fetch_start_date}")
-
-                try:
-                    df = fdr.DataReader(stock_code, start=fetch_start_date)
-                    logging.info(f"[{stock_code}] fdr.DataReader returned {len(df)} rows.")
-
-                    if df.empty:
-                        continue
-
-                    data_to_insert = [
-                        (company_id, trade_date.strftime('%Y-%m-%d'), row['Open'], row['High'], row['Low'], row['Close'], row['Volume'])
-                        for trade_date, row in df.iterrows()
-                    ]
-                    
-                    if data_to_insert:
-                        logging.info(f"[{stock_code}] Preparing to insert {len(data_to_insert)} price records.")
-                        price_query = """
-                        INSERT INTO prices (company_id, trade_date, open_price, high_price, low_price, close_price, volume)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        ON DUPLICATE KEY UPDATE 
-                            open_price=VALUES(open_price), high_price=VALUES(high_price), low_price=VALUES(low_price), 
-                            close_price=VALUES(close_price), volume=VALUES(volume)
-                        """
-                        self.db_access.execute_many_query(price_query, data_to_insert)
-
-                except Exception as e:
-                    if '404' in str(e):
-                        logging.warning(f"'{stock_code}' 종목 데이터를 찾을 수 없어(404) DB에서 삭제를 시도합니다.")
-                        try:
-                            self.db_access.execute_query("DELETE FROM prices WHERE company_id = %s", (company_id,))
-                            self.db_access.execute_query("DELETE FROM companies WHERE id = %s", (company_id,))
-                        except Exception as delete_e:
-                            logging.error(f"'{stock_code}' 종목 DB 삭제 중 오류 발생: {delete_e}")
-                    else:
-                        logging.error(f"'{stock_code}' 종목 데이터 처리 중 오류 발생: {e}")
-
-            cursor.close()
-            logging.info("주가 데이터 저장 완료.")
-        except Exception as e:
-            logging.error(f"An unexpected error occurred in save_daily_prices: {e}")
 
     def update_risk_metrics(self, limit=None):
         """DB에 저장된 주가 정보를 바탕으로 1일 최대 하락률을 계산하여 daily_financials에 업데이트"""
