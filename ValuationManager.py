@@ -160,6 +160,13 @@ class ValuationManager:
                 companies AS c ON df.code = c.code
             JOIN
                 (
+                    SELECT code, MAX(date) as max_date
+                    FROM daily_financials
+                    WHERE date <= %s
+                    GROUP BY code
+                ) AS latest_df ON df.code = latest_df.code AND df.date = latest_df.max_date
+            JOIN
+                (
                     SELECT
                         company_id,
                         close_price,
@@ -167,8 +174,7 @@ class ValuationManager:
                     FROM prices
                 ) AS p_latest ON c.id = p_latest.company_id AND p_latest.rn = 1
             WHERE
-                df.date = %s
-                AND c.code LIKE '%%0'
+                c.code LIKE '%%0'
         """
         params = [date_str]
         if limit:
