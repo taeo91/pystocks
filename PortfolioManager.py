@@ -14,6 +14,8 @@ class PortfolioManager:
     def __init__(self, db_manager, etf_manager):
         self.db_manager = db_manager
         self.etf_manager = etf_manager
+        self.target_sheets = ['CMA', '연금저축', 'IRP']
+        self.sheet_configs = {}
 
     # --- Private Helper Methods ---
 
@@ -81,14 +83,8 @@ class PortfolioManager:
         logging.info(f"Table '{table_name}' created or already exists.")
 
     def _update_revision_portfolio(self, workbook, latest_db_date, tickers, placeholders):
-        """Updates the 'Portfolio' sheet for revision files."""
-        sheet_name = 'Portfolio'
+        """Updates the portfolio sheets for revision files."""
         try:
-            sheet = workbook[sheet_name]
-            header = [cell.value for cell in sheet[3]] # Header on 3rd row
-            code_col_idx = header.index('코드') + 1
-            price_col_idx = header.index('현재가') + 1
-
             # Get prices from both tables
             query_stock = f"SELECT c.code, p.close_price FROM prices p JOIN companies c ON p.company_id = c.id WHERE p.trade_date = %s AND c.code IN ({placeholders}) AND c.market != 'ETF'"
             stock_prices_raw = self.db_manager.fetch_all(query_stock, [latest_db_date] + tickers)
@@ -99,16 +95,47 @@ class PortfolioManager:
             etf_prices = {code: price for code, price in etf_prices_raw} if etf_prices_raw else {}
 
             prices_for_date.update(etf_prices)
-
             blue_font = Font(color="0000FF")
-            for row_idx in range(4, sheet.max_row + 1): # Data starts from 4th row
-                ticker = sheet.cell(row=row_idx, column=code_col_idx).value
-                if ticker in prices_for_date:
-                    price_cell = sheet.cell(row=row_idx, column=price_col_idx)
-                    price_cell.value = prices_for_date[ticker]
-                    price_cell.font = blue_font
-        except (KeyError, ValueError, Exception) as e:
-            logging.error(f"Failed to update '{sheet_name}' sheet: {e}")
+
+            for sheet_name in self.target_sheets:
+                if sheet_name not in workbook.sheetnames or sheet_name not in self.sheet_configs:
+                    continue
+                sheet = workbook[sheet_name]
+                config = self.sheet_configs[sheet_name]
+                
+                if config['orientation'] == 'horizontal':
+                    header_row_num = config['header_idx'] + 1
+                    try:
+                        header = [cell.value for cell in sheet[header_row_num]]
+                        code_col_idx = header.index('코드') + 1
+                        price_col_idx = header.index('현재가') + 1
+                    except ValueError:
+                        continue
+                    for row_idx in range(header_row_num + 1, sheet.max_row + 1):
+                        ticker_cell = sheet.cell(row=row_idx, column=code_col_idx)
+                        ticker = str(ticker_cell.value).zfill(6) if ticker_cell.value else None
+                        if ticker and ticker in prices_for_date:
+                            price_cell = sheet.cell(row=row_idx, column=price_col_idx)
+                            price_cell.value = prices_for_date[ticker]
+                            price_cell.font = blue_font
+                elif config['orientation'] == 'vertical':
+                    header_col_num = config['header_idx'] + 1
+                    try:
+                        header = [sheet.cell(row=i, column=header_col_num).value for i in range(1, sheet.max_row + 1)]
+                        code_row_idx = header.index('코드') + 1
+                        price_row_idx = header.index('현재가') + 1
+                    except ValueError:
+                        continue
+                    for col_idx in range(header_col_num + 1, sheet.max_column + 1):
+                        ticker_cell = sheet.cell(row=code_row_idx, column=col_idx)
+                        ticker = str(ticker_cell.value).zfill(6) if ticker_cell.value else None
+                        if ticker and ticker in prices_for_date:
+                            price_cell = sheet.cell(row=price_row_idx, column=col_idx)
+                            price_cell.value = prices_for_date[ticker]
+                            price_cell.font = blue_font
+
+        except (KeyError, Exception) as e:
+            logging.error(f"Failed to update sheets: {e}")
 
     # --- Public Methods ---
 
@@ -119,15 +146,60 @@ class PortfolioManager:
         return "VARCHAR(255)"
 
     def get_tickers_from_excel(self, file_path):
-        """Extracts tickers from the 'Portfolio' sheet of the given Excel file."""
+        """
+        Dynamically finds the header in target sheets (row or column) and extracts stock tickers.
+        """
+        all_tickers = set()
         try:
-            sheet_name, header = 'Portfolio', 2
-            df = pd.read_excel(file_path, sheet_name=sheet_name, header=header, dtype={'코드': str})
-            tickers = df['코드'].dropna().apply(lambda x: str(x).zfill(6)).tolist()
-            logging.info(f"Extracted {len(tickers)} tickers from file '{file_path}'.")
-            return tickers
+            xls = pd.ExcelFile(file_path)
+            for sheet_name in self.target_sheets:
+                if sheet_name not in xls.sheet_names:
+                    logging.warning(f"'{sheet_name}' 시트를 찾을 수 없습니다.")
+                    continue
+
+                df_full = pd.read_excel(file_path, sheet_name=sheet_name, header=None)
+                found_header = False
+
+                # 1. Try to find header in rows (horizontal orientation)
+                for i, row in df_full.head(10).iterrows():
+                    row_values = [str(v).strip() for v in row.dropna().tolist()]
+                    if '코드' in row_values and '종목' in row_values:
+                        self.sheet_configs[sheet_name] = {'header_idx': i, 'orientation': 'horizontal'}
+                        df = pd.read_excel(file_path, sheet_name=sheet_name, header=i, dtype={'코드': str})
+                        if '코드' in df.columns:
+                            tickers = df['코드'].dropna().astype(str).apply(lambda x: x.zfill(6)).tolist()
+                            all_tickers.update(tickers)
+                            logging.info(f"'{file_path}' 파일의 '{sheet_name}' 시트에서 수평 방향으로 {len(tickers)}개의 티커를 추출했습니다. (헤더 행: {i + 1})")
+                        found_header = True
+                        break
+
+                if found_header: continue
+
+                # 2. If not found, try to find header in columns (vertical orientation)
+                df_transposed = df_full.T
+                for i, row in df_transposed.head(10).iterrows():
+                    row_values = [str(v).strip() for v in row.dropna().tolist()]
+                    if '코드' in row_values and '종목' in row_values:
+                        self.sheet_configs[sheet_name] = {'header_idx': i, 'orientation': 'vertical'}
+                        df = pd.read_excel(file_path, sheet_name=sheet_name, header=None).T
+                        df.columns = df.iloc[i]
+                        df = df.iloc[i+1:]
+                        df = df.rename(columns={'코드': '코드_val'})
+                        
+                        if '코드_val' in df.columns:
+                            tickers = df['코드_val'].dropna().astype(str).apply(lambda x: x.zfill(6)).tolist()
+                            all_tickers.update(tickers)
+                            logging.info(f"'{file_path}' 파일의 '{sheet_name}' 시트에서 수직 방향으로 {len(tickers)}개의 티커를 추출했습니다. (헤더 열: {i + 1})")
+                        found_header = True
+                        break
+
+                if not found_header:
+                    logging.error(f"'{sheet_name}' 시트에서 '코드'와 '종목'을 포함하는 헤더를 찾을 수 없습니다.")
+
+            return list(all_tickers)
+            
         except Exception as e:
-            logging.error(f"Error reading tickers from excel file {file_path}: {e}")
+            logging.error(f"Excel 파일 '{file_path}'에서 종목 정보를 읽는 중 오류 발생: {e}", exc_info=True)
             return []
 
     def fetch_and_save_prices(self, tickers, market_type='etf', start_date=None):
@@ -193,13 +265,32 @@ class PortfolioManager:
 
     def import_portfolio_from_excel(self, file_path, table_name):
         try:
-            df = pd.read_excel(file_path)
+            all_dfs = []
+            for sheet_name in self.target_sheets:
+                if sheet_name not in self.sheet_configs:
+                    continue
+                config = self.sheet_configs[sheet_name]
+                if config['orientation'] == 'horizontal':
+                    df = pd.read_excel(file_path, sheet_name=sheet_name, header=config['header_idx'])
+                elif config['orientation'] == 'vertical':
+                    df = pd.read_excel(file_path, sheet_name=sheet_name, header=None).T
+                    df.columns = df.iloc[config['header_idx']]
+                    df = df.iloc[config['header_idx']+1:]
+                else:
+                    continue
+                all_dfs.append(df)
+            
+            if not all_dfs:
+                logging.error("Import할 수 있는 포트폴리오 데이터가 없습니다.")
+                return
+                
+            df = pd.concat(all_dfs, ignore_index=True)
             logging.info(f"Successfully read Excel file: {file_path}")
         except FileNotFoundError:
             logging.error(f"Error: The file '{file_path}' was not found.")
             return
 
-        df.columns = [col.strip().replace(" ", "_").replace("-", "_").replace("(", "").replace(")", "") for col in df.columns]
+        df.columns = [str(col).strip().replace(" ", "_").replace("-", "_").replace("(", "").replace(")", "") for col in df.columns]
         self._create_table_from_dataframe(table_name, df, add_auto_increment_id=False)
 
         insert_query = f"INSERT INTO {table_name} ({', '.join([f'`{col}`' for col in df.columns])}) VALUES ({', '.join(['%s'] * len(df.columns))})"
@@ -230,17 +321,37 @@ class PortfolioManager:
         logging.info(f"Data inserted into '{table_name}'.")
 
     def import_holdings_from_excel(self, file_path, table_name):
-        """Imports holdings data from the 'Portfolio' sheet into a MySQL database."""
-        sheet_name, header, cols_map = 'Portfolio', 2, {
+        """Imports holdings data from the target sheets into a MySQL database."""
+        cols_map = {
             '코드': 'ticker', '종목명': 'stock_name', '보유수량': 'quantity',
             '매입단가': 'avg_price', '매입금액': 'purchase_amount', 'MDD': 'mdd_percent'
         }
 
         try:
-            df = pd.read_excel(file_path, sheet_name=sheet_name, header=header, dtype={'코드': str})
+            all_dfs = []
+            for sheet_name in self.target_sheets:
+                if sheet_name not in self.sheet_configs:
+                    continue
+                config = self.sheet_configs[sheet_name]
+                if config['orientation'] == 'horizontal':
+                    df = pd.read_excel(file_path, sheet_name=sheet_name, header=config['header_idx'], dtype={'코드': str})
+                elif config['orientation'] == 'vertical':
+                    df = pd.read_excel(file_path, sheet_name=sheet_name, header=None).T
+                    df.columns = df.iloc[config['header_idx']]
+                    df = df.iloc[config['header_idx']+1:]
+                    df = df.astype({'코드': str})
+                else:
+                    continue
+                all_dfs.append(df)
+            
+            if not all_dfs:
+                logging.error("Import할 수 있는 Holdings 데이터가 없습니다.")
+                return
+                
+            df = pd.concat(all_dfs, ignore_index=True)
             holdings_df = df[list(cols_map.keys())].rename(columns=cols_map)
         except (FileNotFoundError, KeyError, Exception) as e:
-            logging.error(f"Error reading or processing sheet '{sheet_name}': {e}")
+            logging.error(f"Error reading or processing sheets: {e}")
             return
 
         holdings_df = holdings_df[holdings_df['stock_name'] != '합계'].dropna(subset=['stock_name'])
@@ -342,7 +453,6 @@ class PortfolioManager:
             logging.error(f"Error: File '{file_path}' not found.")
         except Exception as e:
             logging.error(f"An error occurred while updating excel: {e}", exc_info=True)
-
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     load_dotenv()

@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
         # 2. 주식 정보 및 가격 처리
         logging.info("[2/5] 주식 정보 및 가격 데이터 업데이트 시작...")
-        #stock_manager.save_stock_info(limit=limit)
+        stock_manager.save_stock_info(limit=limit)
         stock_manager.save_daily_prices(start_date=start_date_str, limit=limit)
         stock_manager.update_risk_metrics(limit=limit)
         logging.info("[2/5] 주식 정보 및 가격 데이터 업데이트 완료.")
@@ -77,6 +77,7 @@ if __name__ == "__main__":
         # 5. 포트폴리오 처리
         logging.info("[5/5] 포트폴리오 업데이트 시작...")
         tickers = portfolio_manager.get_tickers_from_excel(portfolio_file_path)
+        logging.info(f"모든 포트폴리오 시트에서 총 {len(tickers)}개의 고유 티커를 수집했습니다. 가격 정보를 가져옵니다.")
         if tickers:
             portfolio_manager.fetch_and_save_prices(tickers, market_type='etf', start_date=start_date_str)
             portfolio_manager.fetch_and_save_prices(tickers, market_type='stock', start_date=start_date_str)

@@ -120,7 +120,7 @@ class ValuationManager:
             financial_data = dict(zip(fin_cols, financial_data_tuple))
 
             query_price = """
-            SELECT p.close_price, c.name
+            SELECT p.close_price, c.name, c.id
             FROM prices p
             JOIN companies c ON p.company_id = c.id
             WHERE c.code = %s
@@ -133,6 +133,7 @@ class ValuationManager:
 
             # 2. 데이터 취합 및 중앙 계산 메서드 호출
             stock_data = {
+                'id': price_data[2],
                 'code': code,
                 'name': price_data[1],
                 'current_price': price_data[0],
@@ -151,7 +152,7 @@ class ValuationManager:
         # DB가 윈도우 함수를 지원하지 않는 경우, 서브쿼리 등으로 최신 가격을 가져오는 로직 수정이 필요합니다.
         query = """
             SELECT
-                df.code, c.name, df.pbr, df.per, df.indust_per, df.eps, df.roe, df.bps, df.eps_pred, df.roe_pred, df.bps_pred,
+                c.id, df.code, c.name, df.pbr, df.per, df.indust_per, df.eps, df.roe, df.bps, df.eps_pred, df.roe_pred, df.bps_pred,
                 df.perf_yoy, df.perf_vs_3m_ago,
                 p_latest.close_price AS current_price
             FROM
@@ -187,7 +188,7 @@ class ValuationManager:
             return []
 
         columns = [
-            'code', 'name', 'pbr', 'per', 'indust_per', 'eps', 'roe', 'bps', 'eps_pred', 'roe_pred', 'bps_pred',
+            'id', 'code', 'name', 'pbr', 'per', 'indust_per', 'eps', 'roe', 'bps', 'eps_pred', 'roe_pred', 'bps_pred',
             'perf_yoy', 'perf_vs_3m_ago', 'current_price'
         ]
         return [dict(zip(columns, row)) for row in rows]
@@ -195,13 +196,13 @@ class ValuationManager:
     def _prepare_data(self, stock_data):
         """데이터를 추출하고 숫자형으로 변환합니다."""
         data = {key: stock_data.get(key) for key in [
-            'code', 'name', 'current_price', 'pbr', 'per', 'indust_per',
+            'id', 'code', 'name', 'current_price', 'pbr', 'per', 'indust_per',
             'eps', 'roe', 'bps', 'eps_pred', 'roe_pred', 'bps_pred',
             'perf_yoy', 'perf_vs_3m_ago'
         ]}
         
         for key, value in data.items():
-            if key in ['code', 'name']:
+            if key in ['id', 'code', 'name']:
                 continue
             if isinstance(value, (int, float)):
                 continue
@@ -314,6 +315,7 @@ class ValuationManager:
             )
 
             return {
+                'id': data.get('id'),
                 'code': data['code'], 'name': data['name'], 'current_price': data['current_price'],
                 'fair_value': round(fair_value, 2),
                 'discrepancy_ratio': round(discrepancy_ratio, 2),
@@ -362,6 +364,13 @@ class ValuationManager:
 
         try:
             df = pd.DataFrame(results)
+            
+            # id (시가총액 순위) 기준으로 정렬 후 컬럼 제거
+            if 'id' in df.columns:
+                # None 값이 있을 경우를 대비해 처리 (기본적으로 맨 뒤로)
+                df['id'] = pd.to_numeric(df['id'], errors='coerce')
+                df = df.sort_values(by='id', na_position='last')
+                df = df.drop(columns=['id'])
             
             # 컬럼 순서 조정: name을 code 바로 뒤로 이동
             if 'name' in df.columns:
