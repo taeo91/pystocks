@@ -15,7 +15,7 @@ class PortfolioManager:
     def __init__(self, db_manager, etf_manager):
         self.db_manager = db_manager
         self.etf_manager = etf_manager
-        self.target_sheets = ['CMA', '연금저축', 'IRP', '개인연금', '퇴직연금']
+        self.target_sheets = ['CMA', '개인연금', '퇴직연금']
         self.sheet_configs = {}
 
     # --- Private Helper Methods ---
@@ -253,9 +253,9 @@ class PortfolioManager:
             logging.info(f"[{ticker}] Fetching price data from {fetch_start_date}")
             try:
                 df = fdr.DataReader(ticker, start=fetch_start_date)
-                if df.empty:
+                if not df.empty:
                     data_to_insert = [(db_id, date.strftime('%Y-%m-%d'), row['Open'], row['High'], row['Low'], row['Close'], row['Volume']) for date, row in df.iterrows()]
-                if data_to_insert:
+                if not df.empty and data_to_insert:
                     price_query = f"INSERT INTO {table_name} ({id_column}, trade_date, open_price, high_price, low_price, close_price, volume) VALUES (%s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE open_price=VALUES(open_price), high_price=VALUES(high_price), low_price=VALUES(low_price), close_price=VALUES(close_price), volume=VALUES(volume)"
                     self.db_manager.execute_many_query(price_query, data_to_insert)
                     logging.info(f"[{ticker}] Inserted/updated {len(data_to_insert)} price records into {table_name}.")
