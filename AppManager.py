@@ -27,6 +27,29 @@ def setup_logging():
         format='%(asctime)s - %(levelname)s - %(message)s'
     )
 
+
+def _normalize_env_path(value):
+    if not value:
+        return None
+    normalized = str(value).strip()
+    if (normalized.startswith('"') and normalized.endswith('"')) or (normalized.startswith("'") and normalized.endswith("'")):
+        normalized = normalized[1:-1].strip()
+    return normalized
+
+
+def get_portfolio_excel_path(default='reports/portfolio_r16.xlsx'):
+    load_dotenv()
+    path = _normalize_env_path(os.getenv('PORTFOLIO_EXCEL_FILE', default))
+    if not path:
+        logging.error('PORTFOLIO_EXCEL_FILE environment variable not set.')
+        return None
+    if not os.path.isabs(path):
+        path = os.path.join(os.path.dirname(__file__), path)
+    if not os.path.exists(path):
+        logging.error(f'포트폴리오 파일이 존재하지 않습니다: {path}')
+        return None
+    return path
+
 @contextmanager
 def get_db_connection():
     """데이터베이스 연결을 위한 컨텍스트 매니저"""

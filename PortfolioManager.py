@@ -7,6 +7,7 @@ import datetime
 import re
 import FinanceDataReader as fdr
 from ETFManager import ETFManager
+from AppManager import get_portfolio_excel_path
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 
@@ -14,7 +15,7 @@ class PortfolioManager:
     def __init__(self, db_manager, etf_manager):
         self.db_manager = db_manager
         self.etf_manager = etf_manager
-        self.target_sheets = ['CMA', '연금저축', 'IRP']
+        self.target_sheets = ['CMA', '연금저축', 'IRP', '개인연금', '퇴직연금']
         self.sheet_configs = {}
 
     # --- Private Helper Methods ---
@@ -455,7 +456,6 @@ class PortfolioManager:
             logging.error(f"An error occurred while updating excel: {e}", exc_info=True)
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    load_dotenv()
     
     db_manager = DBAccessManager(
         host=os.getenv("DB_HOST"),
@@ -464,9 +464,9 @@ if __name__ == '__main__':
         database=os.getenv("DB_NAME")
     )
     
-    portfolio_file_path = os.getenv("PORTFOLIO_EXCEL_FILE")
+    portfolio_file_path = get_portfolio_excel_path()
     if not portfolio_file_path:
-        logging.error("PORTFOLIO_EXCEL_FILE environment variable not set.")
+        logging.error("포트폴리오 파일 경로가 없어서 PortfolioManager를 실행할 수 없습니다.")
     else:
         db_manager.connect_to_mysql()
 

@@ -1,7 +1,7 @@
 
 import logging
 import os
-from dotenv import load_dotenv
+from AppManager import get_portfolio_excel_path
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Font
@@ -169,14 +169,12 @@ def update_excel_file(file_path, sheet_updates):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     
-    load_dotenv()
+    portfolio_file_path = get_portfolio_excel_path()
     
-    portfolio_file_path = os.getenv("PORTFOLIO_EXCEL_FILE", "reports/portfolio_r16.xlsx")
-    
-    if not portfolio_file_path or not os.path.exists(portfolio_file_path):
-        logging.error(f"포트폴리오 파일이 잘못 설정되었거나 없습니다: {portfolio_file_path}")
+    if not portfolio_file_path:
+        logging.error("포트폴리오 파일이 잘못 설정되었거나 없습니다.")
     else:
-        target_sheets = ['CMA', '연금저축', 'IRP']
+        target_sheets = ['CMA', '개인연금', '퇴직연금']
         sheet_updates = {}
         all_tickers = set()
 
