@@ -17,19 +17,6 @@ if __name__ == "__main__":
     # .env 파일에서 포트폴리오 파일 경로를 로드합니다.
     portfolio_file_path = get_portfolio_excel_path()
     
-    # 로깅 설정
-    log_dir = 'logs'
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.FileHandler(os.path.join(log_dir, f"pystocks_{datetime.date.today()}.log")),
-            logging.StreamHandler()
-        ]
-    )
-
     # AppManager를 사용하여 데이터베이스 연결
     with get_db_connection() as db_access:
         logging.info("="*50)

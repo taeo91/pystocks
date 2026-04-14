@@ -2,7 +2,7 @@ import logging
 import datetime
 import os
 import pandas as pd
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Font
 from AppManager import get_db_connection
 
 class ValuationManager:
@@ -423,6 +423,23 @@ class ValuationManager:
                         if result_cell.value == self._RESULT_UNDERVALUED:
                             for col_num in range(1, worksheet.max_column + 1):
                                 worksheet.cell(row=row_num, column=col_num).fill = undervalued_fill
+
+                # 2-1. discrepancy_ratio가 -30보다 작은 행 전체 bold 적용
+                if 'discrepancy_ratio' in col_map:
+                    discrepancy_col_idx = col_map['discrepancy_ratio']
+                    bold_font = Font(bold=True)
+                    
+                    for row_num in range(2, worksheet.max_row + 1):
+                        discrepancy_cell = worksheet.cell(row=row_num, column=discrepancy_col_idx)
+                        if discrepancy_cell.value is not None:
+                            try:
+                                discrepancy_value = float(discrepancy_cell.value)
+                                if discrepancy_value < -30:
+                                    for col_num in range(1, worksheet.max_column + 1):
+                                        cell = worksheet.cell(row=row_num, column=col_num)
+                                        cell.font = bold_font
+                            except (ValueError, TypeError):
+                                pass
 
                 # 3. 컬럼 너비 자동 조정
                 for column_cells in worksheet.columns:

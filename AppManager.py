@@ -8,11 +8,12 @@ from DBAccessManager import DBAccessManager
 
 def setup_logging():
     """공통 로깅 설정"""
+    import datetime
     log_dir = './logs'
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     
-    log_file_path = os.getenv('LOG_FILE_PATH', f'{log_dir}/pystocks.log')
+    log_file_path = os.path.join(log_dir, f"pystocks_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log")
     
     # 루트 로거의 핸들러를 초기화하여 중복 로깅 방지
     for handler in logging.root.handlers[:]:
