@@ -11,6 +11,69 @@ class ETFManager:
     def __init__(self, db_manager):
         self.db_manager = db_manager
 
+    @staticmethod
+    def _to_number(value):
+        """문자열/숫자 값을 DB 저장 가능한 숫자 타입으로 변환합니다."""
+        if value is None or value == '':
+            return None
+        if isinstance(value, str):
+            value = value.replace(',', '').strip()
+            if value == '':
+                return None
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    def _save_etf_info_from_naver(self, limit):
+        """Naver ETF API에서 ETF 정보를 읽어와 etf_info 테이블에 저장합니다."""
+        url = "https://finance.naver.com/api/sise/etfItemList.nhn?etfType=0&targetColumn=market_sum&sortOrder=desc"
+        headers = {'User-Agent': 'Mozilla/5.0'}
+
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        response.encoding = 'euc-kr'
+        data = response.json()
+
+        if data.get('resultCode') != 'success':
+            raise ValueError(f"Naver API error: {data.get('resultCode')}")
+
+        etf_list = data.get('result', {}).get('etfItemList', [])
+        if not etf_list:
+            logging.warning("Naver API에서 ETF 목록을 가져오지 못했습니다.")
+            return
+
+        etfs_to_insert = []
+        for item in etf_list[:limit]:
+            code = str(item.get('itemcode', '')).zfill(6)
+            name = item.get('itemname')
+            close_price = self._to_number(item.get('nowVal'))
+            nav = self._to_number(item.get('nav'))
+            market_sum = self._to_number(item.get('marketSum'))
+            if market_sum is not None:
+                market_sum = int(market_sum)
+            three_month_earn_rate = self._to_number(item.get('threeMonthEarnRate'))
+
+            if code and name:
+                etfs_to_insert.append((code, name, close_price, nav, market_sum, three_month_earn_rate))
+
+        if not etfs_to_insert:
+            logging.warning("Naver API 응답에서 저장 가능한 ETF 정보가 없습니다.")
+            return
+
+        query = """
+        INSERT INTO etf_info (code, name, close_price, nav, market_sum, three_month_earn_rate)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            name = VALUES(name),
+            close_price = VALUES(close_price),
+            nav = VALUES(nav),
+            market_sum = VALUES(market_sum),
+            three_month_earn_rate = VALUES(three_month_earn_rate)
+        """
+        self.db_manager.execute_many_query(query, etfs_to_insert)
+        logging.info(f"Naver API 기반으로 {len(etfs_to_insert)}개의 ETF 정보를 저장/업데이트했습니다.")
+
     def create_etf_info_table(self):
         """'etf_info' 테이블을 생성합니다. (Excel 파일 컬럼 기반)"""
         query = """
@@ -45,7 +108,8 @@ class ETFManager:
             excel_file_path = os.path.join('reports', etf_filename)
 
             if not os.path.exists(excel_file_path):
-                logging.error(f"ETF 정보 파일 '{excel_file_path}'를 찾을 수 없습니다.")
+                logging.warning(f"ETF 정보 파일 '{excel_file_path}'를 찾을 수 없어 Naver API로 대체합니다.")
+                self._save_etf_info_from_naver(limit)
                 return
 
             logging.info(f"'{excel_file_path}' 파일에서 ETF 정보를 로드합니다.")
