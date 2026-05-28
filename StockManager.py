@@ -26,8 +26,25 @@ class StockManager:
     def create_tables(self):
         """주식 관련 테이블(companies, daily_financials, prices, etf_prices)을 생성"""
         if self._create_companies_table() and self._create_daily_financials_table() and self._create_prices_table() and self._create_etf_prices_table():
+            self._ensure_beta_column()
             return True
         return False
+
+    def _ensure_beta_column(self):
+        """기존 daily_financials 테이블에 beta 컬럼이 없으면 추가합니다 (마이그레이션)."""
+        try:
+            check_query = """
+            SELECT COUNT(*) FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'daily_financials' AND COLUMN_NAME = 'beta'
+            """
+            result = self.db_access.fetch_one(check_query)
+            if result and result[0] == 0:
+                self.db_access.execute_query(
+                    "ALTER TABLE daily_financials ADD COLUMN beta DECIMAL(10, 4) COMMENT '베타 (KOSPI 대비 1년 일별 수익률)'"
+                )
+                logging.info("'daily_financials' 테이블에 'beta' 컬럼을 추가했습니다.")
+        except Exception as e:
+            logging.error(f"beta 컬럼 확인/추가 중 오류: {e}")
 
     def _create_companies_table(self):
         """'companies' 테이블 생성"""
@@ -73,6 +90,7 @@ class StockManager:
                 perf_yoy VARCHAR(50) COMMENT '실적이슈(전년동기대비)',
                 perf_vs_3m_ago VARCHAR(50) COMMENT '실적이슈(3개월전대비)',
                 max_daily_fall_rate DECIMAL(10, 2) COMMENT '1일 최대 하락률',
+                beta DECIMAL(10, 4) COMMENT '베타 (KOSPI 대비 1년 일별 수익률)',
                 FOREIGN KEY (code) REFERENCES companies (code) ON DELETE CASCADE,
                 UNIQUE KEY (code, date)
             ) COMMENT '일일 재무 정보';
@@ -357,6 +375,16 @@ class StockManager:
 
             start_date = (today_date - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
 
+            # KOSPI 수익률을 루프 밖에서 한 번만 가져옴
+            market_returns = None
+            try:
+                kospi_df = fdr.DataReader('KS11', start=start_date)
+                if kospi_df is not None and not kospi_df.empty:
+                    market_returns = kospi_df['Close'].pct_change()
+                    market_returns.index = market_returns.index.normalize()  # Timestamp → date midnight
+            except Exception as e:
+                logging.warning(f"KOSPI 데이터 로드 실패 — 베타 계산을 건너뜁니다: {e}")
+
             for company in companies:
                 company_id = company['id']
                 code = company['code']
@@ -368,11 +396,11 @@ class StockManager:
                 ORDER BY trade_date ASC
                 """
                 prices = self.db_access.fetch_all(query, (company_id, start_date))
-                
+
                 logging.info(f"[{code}] Found {len(prices) if prices else 0} price records.")
 
                 # 최소 2일치 데이터가 있어야 하락률 계산 가능
-                if not prices or len(prices) < 2: 
+                if not prices or len(prices) < 2:
                     logging.warning(f"[{code}] Skipping metric calculation due to insufficient price data ({len(prices) if prices else 0} records).")
                     continue
 
@@ -381,18 +409,29 @@ class StockManager:
 
                 # 1일 수익률 계산
                 df['daily_return'] = df['close_price'].pct_change() * 100
-                
+
                 # 1일 최대 하락률 (가장 작은 값)
                 max_fall_rate = df['daily_return'].min()
                 logging.info(f"[{code}] Calculated max fall rate: {max_fall_rate}")
-                
+
                 # 하락이 없거나(NaN, 0 이상) 데이터가 부족한 경우 0으로 처리
                 if pd.isna(max_fall_rate) or max_fall_rate >= 0:
                     max_fall_rate = 0.0
 
-                logging.info(f"[{code}] Final value to update: {max_fall_rate}")
-                update_query = "UPDATE daily_financials SET max_daily_fall_rate = %s WHERE code = %s AND date = %s"
-                self.db_access.execute_query(update_query, (max_fall_rate, code, today_date))
+                # 베타 계산: Cov(종목수익률, KOSPI수익률) / Var(KOSPI수익률)
+                beta = None
+                if market_returns is not None and len(df) >= 30:
+                    df['trade_date'] = pd.to_datetime(df['trade_date']).dt.normalize()
+                    stock_returns = df.set_index('trade_date')['close_price'].pct_change()
+                    aligned = pd.DataFrame({'stock': stock_returns, 'market': market_returns}).dropna()
+                    if len(aligned) >= 30:
+                        market_var = aligned['market'].var()
+                        if market_var > 0:
+                            beta = round(float(aligned['stock'].cov(aligned['market']) / market_var), 4)
+
+                logging.info(f"[{code}] max_fall_rate={max_fall_rate}, beta={beta}")
+                update_query = "UPDATE daily_financials SET max_daily_fall_rate = %s, beta = %s WHERE code = %s AND date = %s"
+                self.db_access.execute_query(update_query, (max_fall_rate, beta, code, today_date))
             
             logging.info("리스크 지표 업데이트 완료.")
         except Exception as e:

@@ -1,10 +1,9 @@
 import os
 import time
-import datetime
 import logging
 from dotenv import load_dotenv
 
-from AppManager import get_db_connection, get_portfolio_excel_path
+from AppManager import get_db_connection, get_or_create_today_portfolio
 from StockManager import StockManager
 from ValuationManager import ValuationManager
 from ETFManager import ETFManager
@@ -13,9 +12,9 @@ from PortfolioManager import PortfolioManager
 if __name__ == "__main__":
     # .env 파일 로드
     load_dotenv()
-    
-    # .env 파일에서 포트폴리오 파일 경로를 로드합니다.
-    portfolio_file_path = get_portfolio_excel_path()
+
+    # 오늘 날짜 포트폴리오 파일 준비 (없으면 최근 파일에서 복사 생성)
+    portfolio_file_path = get_or_create_today_portfolio()
     
     # AppManager를 사용하여 데이터베이스 연결
     with get_db_connection() as db_access:

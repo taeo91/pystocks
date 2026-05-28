@@ -28,7 +28,18 @@ class ValuationManager:
         self.LOW_VALUATION_THRESHOLD = float(os.getenv('VAL_LOW_THRESHOLD', '-10.0'))
         self.HIGH_VALUATION_THRESHOLD = float(os.getenv('VAL_HIGH_THRESHOLD', '10.0'))
         self.CONSERVATIVE_FACTOR = float(os.getenv('VAL_CONSERVATIVE_FACTOR', '0.8'))
-        
+
+        # 할인율 설정
+        self.RISK_FREE_RATE = float(os.getenv('VAL_RISK_FREE_RATE', '3.5'))         # 무위험 수익률 (%, 한국 국채 프록시)
+        self.EQUITY_RISK_PREMIUM = float(os.getenv('VAL_EQUITY_RISK_PREMIUM', '5.5'))  # 주식위험 프리미엄 (%)
+        # CAPM: r = Rf + β × ERP
+        # 베타 없을 때 fallback: r = RISK_FREE_RATE + |max_daily_fall_rate| × RISK_FACTOR
+        self.RISK_FACTOR = float(os.getenv('VAL_RISK_FACTOR', '0.4'))               # 변동성 fallback 배수
+        self.MAX_DISCOUNT_RATE = float(os.getenv('VAL_MAX_DISCOUNT_RATE', '20.0'))  # 할인율 상한 (%)
+
+        # RIM 성장률 상한: g <= r × RIM_MAX_G_RATIO (Gordon Growth 조건 r > g 보장)
+        self.RIM_MAX_G_RATIO = float(os.getenv('VAL_RIM_MAX_G_RATIO', '0.5'))
+
         # 가치평가 모델 가중치
         self.W_RIM = float(os.getenv('VAL_W_RIM', '0.6'))
         self.W_PER = float(os.getenv('VAL_W_PER', '0.2'))
@@ -153,7 +164,7 @@ class ValuationManager:
         query = """
             SELECT
                 c.id, df.code, c.name, df.pbr, df.per, df.indust_per, df.eps, df.roe, df.bps, df.eps_pred, df.roe_pred, df.bps_pred,
-                df.perf_yoy, df.perf_vs_3m_ago,
+                df.perf_yoy, df.perf_vs_3m_ago, df.div_yield, df.max_daily_fall_rate, df.beta,
                 p_latest.close_price AS current_price
             FROM
                 daily_financials AS df
@@ -189,7 +200,7 @@ class ValuationManager:
 
         columns = [
             'id', 'code', 'name', 'pbr', 'per', 'indust_per', 'eps', 'roe', 'bps', 'eps_pred', 'roe_pred', 'bps_pred',
-            'perf_yoy', 'perf_vs_3m_ago', 'current_price'
+            'perf_yoy', 'perf_vs_3m_ago', 'div_yield', 'max_daily_fall_rate', 'beta', 'current_price'
         ]
         return [dict(zip(columns, row)) for row in rows]
 
@@ -198,7 +209,7 @@ class ValuationManager:
         data = {key: stock_data.get(key) for key in [
             'id', 'code', 'name', 'current_price', 'pbr', 'per', 'indust_per',
             'eps', 'roe', 'bps', 'eps_pred', 'roe_pred', 'bps_pred',
-            'perf_yoy', 'perf_vs_3m_ago'
+            'perf_yoy', 'perf_vs_3m_ago', 'div_yield', 'max_daily_fall_rate', 'beta'
         ]}
         
         for key, value in data.items():
@@ -229,14 +240,53 @@ class ValuationManager:
             
         return rates
 
-    def _calculate_fair_value_rim(self, data):
-        """RIM 모델 기반 적정주가를 계산합니다."""
+    def _calculate_discount_rate(self, beta, max_daily_fall_rate):
+        """종목별 할인율을 계산합니다 (소수 반환, 예: 0.085).
+
+        1순위 — CAPM (베타 있을 때): r = Rf + β × ERP
+        2순위 — 변동성 proxy (베타 없을 때): r = Rf + |max_daily_fall_rate| × RISK_FACTOR
+        공통 — REQUIRED_ROE를 하한, MAX_DISCOUNT_RATE를 상한으로 적용
+        """
+        if beta is not None:
+            r = self.RISK_FREE_RATE + float(beta) * self.EQUITY_RISK_PREMIUM
+        elif max_daily_fall_rate is not None:
+            r = self.RISK_FREE_RATE + abs(float(max_daily_fall_rate)) * self.RISK_FACTOR
+        else:
+            return self.REQUIRED_ROE / 100
+        r = max(r, self.REQUIRED_ROE)
+        r = min(r, self.MAX_DISCOUNT_RATE)
+        return r / 100
+
+    def _calculate_fair_value_rim(self, data, discount_rate):
+        """RIM 모델 기반 적정주가를 계산합니다 (성장률 g 반영).
+
+        공식: P = BPS_pred + (ROE_pred - r) × BPS_pred / (r - g)
+        - g: BPS 성장률로 추정한 지속가능 성장률 (Gordon Growth 조건: g < r 보장)
+        - g = 0 일 때 구 공식(P = BPS × ROE / r)과 동일
+        """
         roe_pred = data.get('roe_pred')
         bps_pred = data.get('bps_pred')
-        if roe_pred is not None and bps_pred is not None and roe_pred >= 0 and bps_pred > 0:
-            excess_profit = (roe_pred / 100 - self.REQUIRED_ROE / 100) * bps_pred
-            return bps_pred + (excess_profit / (self.REQUIRED_ROE / 100))
-        return 0
+        bps = data.get('bps')
+
+        if roe_pred is None or bps_pred is None or roe_pred < 0 or bps_pred <= 0:
+            return 0
+
+        r = discount_rate  # 소수 (예: 0.08)
+
+        # BPS 성장률로 지속가능 성장률 g 추정
+        g = 0.0
+        if bps and float(bps) > 0:
+            g = (float(bps_pred) - float(bps)) / float(bps)
+
+        # Gordon Growth 조건: g < r, 하한 -30% (과도한 축소 방지)
+        g = max(-0.30, min(g, r * self.RIM_MAX_G_RATIO))
+
+        excess_profit = (float(roe_pred) / 100 - r) * float(bps_pred)
+        denominator = r - g
+        if abs(denominator) < 1e-6:
+            return float(bps_pred)
+
+        return max(0.0, float(bps_pred) + excess_profit / denominator)
 
     def _calculate_fair_value_per(self, data):
         """업종 PER 모델 기반 적정주가를 계산합니다."""
@@ -303,12 +353,16 @@ class ValuationManager:
             data = self._prepare_data(stock_data)
             growth_rates = self._calculate_growth_rates(data)
 
-            fv_rim = self._calculate_fair_value_rim(data)
+            discount_rate = self._calculate_discount_rate(data.get('beta'), data.get('max_daily_fall_rate'))
+
+            fv_rim = self._calculate_fair_value_rim(data, discount_rate)
             fv_per = self._calculate_fair_value_per(data)
             fv_pegr = self._calculate_fair_value_pegr(data, growth_rates['eps_growth_rate'])
 
             fair_value = self._blend_and_apply_margin(fv_rim, fv_per, fv_pegr)
-            if fair_value <= 0: return None
+            if fair_value <= 0:
+                logging.debug(f"'{data.get('code')}' 모든 모델의 적정주가가 0 이하 — 평가 불가 (ROE_pred={data.get('roe_pred')}, EPS_pred={data.get('eps_pred')})")
+                return None
 
             result, discrepancy_ratio, peg_ratio = self._classify_valuation(
                 data['current_price'], fair_value, data['per'], growth_rates['eps_growth_rate']
@@ -318,6 +372,7 @@ class ValuationManager:
                 'id': data.get('id'),
                 'code': data['code'], 'name': data['name'], 'current_price': data['current_price'],
                 'fair_value': round(fair_value, 2),
+                'discount_rate': round(discount_rate * 100, 2),
                 'discrepancy_ratio': round(discrepancy_ratio, 2),
                 'pbr': data['pbr'], 'per': data['per'], 'roe': data['roe'],
                 'eps_growth_rate': round(growth_rates['eps_growth_rate'], 2),
@@ -365,7 +420,7 @@ class ValuationManager:
         try:
             df = pd.DataFrame(results)
             
-            # id (시가총액 순위) 기준으로 정렬 후 컬럼 제거
+            # id (기업 DB 기본키, companies 삽입 순서 ≈ 시가총액 순) 기준으로 정렬 후 컬럼 제거
             if 'id' in df.columns:
                 # None 값이 있을 경우를 대비해 처리 (기본적으로 맨 뒤로)
                 df['id'] = pd.to_numeric(df['id'], errors='coerce')
@@ -404,8 +459,8 @@ class ValuationManager:
                             cell = worksheet.cell(row=row, column=col_idx)
                             cell.number_format = '#,##0'
 
-                # 1-1. 소수점 2자리 포맷 적용 (실적 지표)
-                for col_name in ['perf_yoy', 'perf_vs_3m_ago']:
+                # 1-1. 소수점 2자리 포맷 적용 (실적 지표, 할인율)
+                for col_name in ['perf_yoy', 'perf_vs_3m_ago', 'discount_rate']:
                     if col_name in col_map:
                         col_idx = col_map[col_name]
                         for row in range(2, worksheet.max_row + 1):

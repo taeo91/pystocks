@@ -1,7 +1,10 @@
 import os
 import sys
+import glob
+import shutil
 import logging
 import time
+import datetime
 from contextlib import contextmanager
 from dotenv import load_dotenv
 from DBAccessManager import DBAccessManager
@@ -50,6 +53,40 @@ def get_portfolio_excel_path(default='reports/portfolio_r16.xlsx'):
         logging.error(f'포트폴리오 파일이 존재하지 않습니다: {path}')
         return None
     return path
+
+
+def get_or_create_today_portfolio():
+    """오늘 날짜 포트폴리오 파일 경로를 반환합니다.
+
+    파일이 없으면 reports/ 디렉터리에서 가장 최근 portfolio_YYMMDD.xlsx를
+    오늘 날짜로 복사해 생성합니다. 날짜 파일이 전혀 없으면 r16 파일을 원본으로 씁니다.
+    """
+    reports_dir = os.path.join(os.path.dirname(__file__), 'reports')
+    os.makedirs(reports_dir, exist_ok=True)
+
+    today_str = datetime.date.today().strftime('%y%m%d')   # e.g. '260528'
+    today_path = os.path.join(reports_dir, f'portfolio_{today_str}.xlsx')
+
+    if os.path.exists(today_path):
+        logging.info(f"오늘 포트폴리오 파일 존재: {today_path}")
+        return today_path
+
+    # 가장 최근 portfolio_YYMMDD.xlsx 찾기 (알파벳 정렬 = 날짜 정렬)
+    pattern = os.path.join(reports_dir, 'portfolio_[0-9][0-9][0-9][0-9][0-9][0-9].xlsx')
+    dated_files = sorted(glob.glob(pattern))
+
+    if dated_files:
+        source = dated_files[-1]
+    else:
+        # 날짜 파일이 없으면 r16 파일 사용
+        source = get_portfolio_excel_path()
+        if not source:
+            logging.error("복사할 원본 포트폴리오 파일을 찾을 수 없습니다.")
+            return None
+
+    shutil.copy2(source, today_path)
+    logging.info(f"포트폴리오 파일 생성: {today_path}  (원본: {os.path.basename(source)})")
+    return today_path
 
 @contextmanager
 def get_db_connection():

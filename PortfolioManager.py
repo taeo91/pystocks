@@ -454,16 +454,17 @@ class PortfolioManager:
             logging.error(f"Error: File '{file_path}' not found.")
         except Exception as e:
             logging.error(f"An error occurred while updating excel: {e}", exc_info=True)
+            
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    
+
     db_manager = DBAccessManager(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         database=os.getenv("DB_NAME")
     )
-    
+
     portfolio_file_path = get_portfolio_excel_path()
     if not portfolio_file_path:
         logging.error("포트폴리오 파일 경로가 없어서 PortfolioManager를 실행할 수 없습니다.")
@@ -473,7 +474,7 @@ if __name__ == '__main__':
         if db_manager.connection:
             etf_manager = ETFManager(db_manager)
             portfolio_manager = PortfolioManager(db_manager, etf_manager)
-            
+
             logging.info("Step 1: Reading tickers from Excel file...")
             tickers = portfolio_manager.get_tickers_from_excel(portfolio_file_path)
 
@@ -484,5 +485,5 @@ if __name__ == '__main__':
 
                 logging.info("Step 3: Updating Excel file with latest prices from DB...")
                 portfolio_manager.update_portfolio_excel_with_prices(portfolio_file_path)
-            
+
             db_manager.close_connection()
