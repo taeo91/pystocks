@@ -1,7 +1,7 @@
 
 import logging
 import os
-from AppManager import get_portfolio_excel_path
+from AppManager import get_or_create_today_portfolio
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import Font
@@ -169,7 +169,7 @@ def update_excel_file(file_path, sheet_updates):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     
-    portfolio_file_path = get_portfolio_excel_path()
+    portfolio_file_path = get_or_create_today_portfolio()
     
     if not portfolio_file_path:
         logging.error("포트폴리오 파일이 잘못 설정되었거나 없습니다.")

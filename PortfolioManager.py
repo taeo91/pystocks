@@ -7,7 +7,7 @@ import datetime
 import re
 import FinanceDataReader as fdr
 from ETFManager import ETFManager
-from AppManager import get_portfolio_excel_path
+from AppManager import get_or_create_today_portfolio
 from openpyxl import load_workbook
 from openpyxl.styles import Font
 
@@ -465,7 +465,7 @@ if __name__ == '__main__':
         database=os.getenv("DB_NAME")
     )
 
-    portfolio_file_path = get_portfolio_excel_path()
+    portfolio_file_path = get_or_create_today_portfolio()
     if not portfolio_file_path:
         logging.error("포트폴리오 파일 경로가 없어서 PortfolioManager를 실행할 수 없습니다.")
     else:
